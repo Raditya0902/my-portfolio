@@ -6,6 +6,7 @@ import { ProfessionalCard } from '../components/ProfessionalCard';
 import { AcademicCard } from '../components/AcademicCard';
 import { ProjectCard } from '../components/ProjectCard';
 import { SystemStatus } from '../components/SystemStatus';
+import Handshake from '../components/Handshake';
 import { getEntry } from 'astro:content';
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Github, Linkedin, Settings, LayoutGrid } from 'lucide-react';
@@ -19,6 +20,7 @@ if (!portfolioEntry) {
 
 const { basics, education, skills, work, projects, grid_config } = portfolioEntry.data;
 
+const linkedinUrl = basics.profiles.find(p => p.network.toLowerCase() === 'linkedin')?.url || '';
 const lastSync = new Date().toISOString();
 
 // Map layout weights from config
@@ -98,20 +100,11 @@ const projectSpans = grid_config?.project_spans || {};
 
         <footer class="mt-20 space-y-12">
           {/* Contact / Handshake CTA */}
-          <div class="max-w-4xl mx-auto">
-            <div class="h-full bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-center p-12 text-center group hover:bg-primary/10 transition-all cursor-pointer overflow-hidden relative">
-              <div class="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity z-0">
-                <div class="w-full h-full" style="background-image: repeating-linear-gradient(45deg, var(--primary) 0, var(--primary) 1px, transparent 0, transparent 50%); background-size: 10px 10px;"></div>
-              </div>
-              <div class="relative z-10 space-y-4">
-                <p class="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">Initialize_Handshake</p>
-                <h3 class="text-2xl md:text-3xl font-black group-hover:text-primary transition-colors uppercase leading-tight italic">
-                  "Build the future of Agentic Systems"
-                </h3>
-                <p class="text-xs text-[oklch(0.7_0.05_250)] font-mono uppercase tracking-widest">Awaiting_Connection_Request...</p>
-              </div>
-            </div>
-          </div>
+          <Handshake 
+            email={basics.email} 
+            linkedinUrl={linkedinUrl} 
+            client:load 
+          />
 
           <div class="pt-8 pb-20 border-t border-primary/10 text-center">
             <p class="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">

@@ -11,20 +11,26 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 async function fetchGitHubData() {
   console.log('--- Fetching GitHub Data ---');
   
-  const headers = GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {};
+  const headers = GITHUB_TOKEN ? { 
+    Authorization: `token ${GITHUB_TOKEN}`,
+    Accept: 'application/vnd.github.v3+json'
+  } : {
+    Accept: 'application/vnd.github.v3+json'
+  };
 
   try {
-    // 1. Fetch Pinned Repos (simulated by fetching top 6 starred/recent repos if no GraphQL token)
-    // For a real production app, use GraphQL for pinned repos.
-    const reposResponse = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=10`, { headers });
-    const repos = await reposResponse.json();
+    // 1. Fetch all repos to filter by topic
+    const reposResponse = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`, { headers });
+    const allRepos = await reposResponse.json();
 
-    if (!Array.isArray(repos)) {
+    if (!Array.isArray(allRepos)) {
       throw new Error('Failed to fetch repositories');
     }
 
-    const pinnedRepos = repos
-      .filter(repo => !repo.fork)
+    const portfolioRepos = allRepos.filter(repo => repo.topics?.includes('portfolio'));
+    console.log(`Discovered ${portfolioRepos.length} projects with 'portfolio' topic.`);
+
+    const pinnedRepos = portfolioRepos
       .slice(0, 6)
       .map(repo => ({
         name: repo.name,
@@ -35,23 +41,71 @@ async function fetchGitHubData() {
         updatedAt: repo.updated_at
       }));
 
-    // 2. Fetch recent contributions (commits) for the status card
-    const eventsResponse = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/events/public`, { headers });
-    const events = await eventsResponse.json();
+    // 2. Update main.json with discovered projects
+    const mainPath = path.join(__dirname, '../src/content/portfolio/main.json');
+    if (fs.existsSync(mainPath)) {
+      const mainData = JSON.parse(fs.readFileSync(mainPath, 'utf8'));
+      
+      mainData.projects = portfolioRepos.map(repo => ({
+        name: repo.name,
+        description: repo.description || "Project documentation pending",
+        url: repo.html_url,
+        tech: [repo.language].filter(Boolean),
+        metrics: `${repo.stargazers_count} stars`
+      }));
+
+      // Clear manual spans to stabilize grid
+      mainData.grid_config.project_spans = {};
+      
+      fs.writeFileSync(mainPath, JSON.stringify(mainData, null, 2));
+      console.log(`Successfully updated ${mainData.projects.length} projects in main.json`);
+    }
+
+    // 3. Fetch recent contributions (commits) for the status card
+    // The events API can be unreliable for commit messages, so we'll use a search or specific repo fetch if needed.
+    // For now, let's try to get the most recent commits from the user's public activity.
+    const searchResponse = await fetch(`https://api.github.com/search/commits?q=author:${GITHUB_USERNAME}&sort=author-date&order=desc&per_page=5`, { 
+      headers: {
+        ...headers,
+        'Accept': 'application/vnd.github.v3+json'
+      } 
+    });
+    const searchData = await searchResponse.json();
     
-    const pushEvents = Array.isArray(events) 
-      ? events.filter(e => e.type === 'PushEvent' && e.payload.commits && e.payload.commits.length > 0).slice(0, 5)
-      : [];
+    let recentActivity = [];
+    if (searchData.items && Array.isArray(searchData.items)) {
+      recentActivity = searchData.items.map(item => ({
+        repo: item.repository.full_name,
+        message: item.commit.message,
+        url: item.html_url,
+        timestamp: item.commit.author.date
+      }));
+    } else {
+      console.warn('Commit search failed, falling back to events API:', searchData);
+      const eventsEndpoint = GITHUB_TOKEN 
+        ? `https://api.github.com/users/${GITHUB_USERNAME}/events`
+        : `https://api.github.com/users/${GITHUB_USERNAME}/events/public`;
+      
+      const eventsResponse = await fetch(eventsEndpoint, { headers });
+      const events = await eventsResponse.json();
+      
+      if (Array.isArray(events)) {
+        const pushEvents = events.filter(e => e.type === 'PushEvent').slice(0, 5);
+        recentActivity = pushEvents.map(event => ({
+          repo: event.repo.name,
+          message: event.payload.commits?.[0]?.message || 'Pushed commits',
+          url: event.payload.commits?.[0] 
+            ? `https://github.com/${event.repo.name}/commit/${event.payload.commits[0].sha}`
+            : `https://github.com/${event.repo.name}/commits/${event.payload.ref.split('/').pop()}`,
+          timestamp: event.created_at
+        }));
+      }
+    }
 
     const latestStatus = {
       lastUpdate: new Date().toISOString(),
       pinnedRepos,
-      recentActivity: pushEvents.map(event => ({
-        repo: event.repo.name,
-        message: event.payload.commits[0].message,
-        url: `https://github.com/${event.repo.name}/commit/${event.payload.commits[0].sha}`,
-        timestamp: event.created_at
-      }))
+      recentActivity
     };
 
     const outputDir = path.join(__dirname, '../src/content/status');

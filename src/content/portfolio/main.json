@@ -6,13 +6,8 @@
       "TECH_STACK": "col-span-2 row-span-1",
       "LIVE_TELEMETRY": "col-span-1 row-span-1"
     },
-    "project_spans": {
-      "Multi-Agent Production Incident Response System": "col-span-2 row-span-2",
-      "RAG RBAC Chatbot": "col-span-1 row-span-1",
-      "Real-Time Graph Analytics Pipeline": "col-span-1 row-span-1"
-    }
+    "project_spans": {}
   },
-  
   "basics": {
     "name": "Aditya Rallapalli",
     "label": "Aspiring AI/ML Engineer & Systems Architect",
@@ -41,7 +36,12 @@
       "score": "4.00",
       "startDate": "2025-01-01",
       "endDate": "2026-12-31",
-      "courses": ["Data Mining", "Data Processing at Scale", "Natural Language Processing", "Statistics"]
+      "courses": [
+        "Data Mining",
+        "Data Processing at Scale",
+        "Natural Language Processing",
+        "Statistics"
+      ]
     },
     {
       "institution": "National Institute of Technology, Manipur",
@@ -49,15 +49,55 @@
       "score": "8.17",
       "startDate": "2020-12-01",
       "endDate": "2024-05-31",
-      "courses": ["Data Structures", "Algorithms", "Operating Systems", "DBMS", "Computer Networks"]
+      "courses": [
+        "Data Structures",
+        "Algorithms",
+        "Operating Systems",
+        "DBMS",
+        "Computer Networks"
+      ]
     }
   ],
   "skills": {
-    "languages": ["Python", "TypeScript", "JavaScript", "Java", "C/C++"],
-    "ai_ml": ["LLMs", "LangChain", "LangGraph", "HuggingFace", "RAG", "Transformers", "Fine-tuning", "RAGAS evals"],
-    "infrastructure": ["FastAPI", "Docker", "Kubernetes", "Apache Kafka", "Redis", "AWS", "Apache Spark"],
-    "security": ["Prompt injection defense", "Llama Guard", "HITL testing", "PII redaction", "RBAC"],
-    "databases": ["PostgreSQL", "ChromaDB", "Neo4j", "MongoDB"]
+    "languages": [
+      "Python",
+      "TypeScript",
+      "JavaScript",
+      "Java",
+      "C/C++"
+    ],
+    "ai_ml": [
+      "LLMs",
+      "LangChain",
+      "LangGraph",
+      "HuggingFace",
+      "RAG",
+      "Transformers",
+      "Fine-tuning",
+      "RAGAS evals"
+    ],
+    "infrastructure": [
+      "FastAPI",
+      "Docker",
+      "Kubernetes",
+      "Apache Kafka",
+      "Redis",
+      "AWS",
+      "Apache Spark"
+    ],
+    "security": [
+      "Prompt injection defense",
+      "Llama Guard",
+      "HITL testing",
+      "PII redaction",
+      "RBAC"
+    ],
+    "databases": [
+      "PostgreSQL",
+      "ChromaDB",
+      "Neo4j",
+      "MongoDB"
+    ]
   },
   "work": [
     {
@@ -92,28 +132,6 @@
       "summary": "Worked with Global System for Mobile Communications (GSM) and Optical Fiber Communication (OFC) infrastructure."
     }
   ],
-  "projects": [
-    {
-      "name": "Multi-Agent Production Incident Response System",
-      "description": "7-agent LangGraph pipeline autonomously diagnosing production incidents and opening PRs in ~90 seconds.",
-      "url": "https://github.com/Raditya0902/multi-agent-production-incident-response-system",
-      "tech": ["Python", "LangGraph", "Kubernetes", "FastAPI", "ChromaDB"],
-      "metrics": "100% patch correctness across benchmark scenarios"
-    },
-    {
-      "name": "RAG RBAC Chatbot",
-      "description": "Enterprise AI Security System with RBAC enforced at the vector-store level.",
-      "url": "https://github.com/Raditya0902/rag-rbac-chatbot",
-      "tech": ["ChromaDB", "BM25", "Llama Guard 3", "Redis", "JWT"],
-      "metrics": "RAGAS faithfulness 0.9116"
-    },
-    {
-      "name": "Real-Time Graph Analytics Pipeline",
-      "description": "Distributed streaming system processing ~150 msg/sec at <200ms latency.",
-      "url": "https://github.com/Raditya0902/Real-Time-Graph-Analytics-Pipeline",
-      "tech": ["Apache Kafka", "Neo4j GDS", "Kubernetes", "Docker"]
-    }
-  ],
   "achievements": [
     {
       "title": "LeetCode",
@@ -125,6 +143,52 @@
       "date": "2023",
       "summary": "Focused on security software development and cryptanalysis."
     }
+  ],
+  "projects": [
+    {
+      "name": "diffuse-refactor",
+      "description": "Project documentation pending",
+      "url": "https://github.com/Raditya0902/diffuse-refactor",
+      "tech": [
+        "Python"
+      ],
+      "metrics": "0 stars"
+    },
+    {
+      "name": "rag-rbac-chatbot",
+      "description": "Project documentation pending",
+      "url": "https://github.com/Raditya0902/rag-rbac-chatbot",
+      "tech": [
+        "Python"
+      ],
+      "metrics": "0 stars"
+    },
+    {
+      "name": "clinic-voice-agent",
+      "description": "Project documentation pending",
+      "url": "https://github.com/Raditya0902/clinic-voice-agent",
+      "tech": [
+        "Python"
+      ],
+      "metrics": "0 stars"
+    },
+    {
+      "name": "multi-agent-production-incident-response-system",
+      "description": "LangGraph multi-agent AI system: correlate → diagnose → fix → human approval → validate → Slack/GitHub notify → postmortem",
+      "url": "https://github.com/Raditya0902/multi-agent-production-incident-response-system",
+      "tech": [
+        "Python"
+      ],
+      "metrics": "0 stars"
+    },
+    {
+      "name": "sentinelmesh",
+      "description": "Project documentation pending",
+      "url": "https://github.com/Raditya0902/sentinelmesh",
+      "tech": [
+        "Go"
+      ],
+      "metrics": "0 stars"
+    }
   ]
 }
-
