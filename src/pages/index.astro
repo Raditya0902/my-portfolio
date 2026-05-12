@@ -8,7 +8,6 @@ import { ProjectCard } from '../components/ProjectCard';
 import { SystemStatus } from '../components/SystemStatus';
 import Handshake from '../components/Handshake';
 import { getEntry } from 'astro:content';
-import { TooltipProvider } from "@/components/ui/tooltip";
 import { Github, Linkedin, Settings, LayoutGrid } from 'lucide-react';
 import summaryData from '../content/status/summary.json';
 import githubData from '../content/status/github-data.json';
@@ -18,25 +17,61 @@ if (!portfolioEntry) {
   throw new Error('Could not find portfolio data');
 }
 
-const { basics, education, skills, work, projects, grid_config } = portfolioEntry.data;
+const { basics, education, skills, work, projects, grid_config, current_focus_override, skill_tags, STATUS_BLOCK, activity_block } = portfolioEntry.data;
 
 const linkedinUrl = basics.profiles.find(p => p.network.toLowerCase() === 'linkedin')?.url || '';
 const lastSync = new Date().toISOString();
+const latestCommit = githubData.recentActivity?.find(commit => !commit.repo.toLowerCase().includes('my-portfolio'));
 
 // Map layout weights from config
-const weights = grid_config?.layout_weights || {
+const defaultWeights = {
   ACADEMIC_CREDENTIALS: "col-span-1 row-span-1",
-  PROFESSIONAL_HISTORY: "col-span-2 row-span-1",
-  TECH_STACK: "col-span-2 row-span-1",
-  LIVE_TELEMETRY: "col-span-1 row-span-1"
+  PROFESSIONAL_HISTORY: "col-span-1 row-span-1",
+  TECH_STACK: "col-span-1 row-span-1",
+  LIVE_TELEMETRY: "col-span-1 row-span-1",
 };
 
-const projectSpans = grid_config?.project_spans || {};
+const weights = {
+  ...defaultWeights,
+  ...(grid_config?.layout_weights ?? {}),
+};
+
+const projectSpans = grid_config?.project_spans ?? {};
+
+const mdClassMap: Record<string, string> = {
+  "col-span-1": "md:col-span-1",
+  "col-span-2": "md:col-span-2",
+  "col-span-3": "md:col-span-3",
+  "col-span-4": "md:col-span-4",
+  "row-span-1": "md:row-span-1",
+  "row-span-2": "md:row-span-2",
+};
+
+const mdGridClasses = (classes: string) => classes
+  .split(' ')
+  .filter(Boolean)
+  .map((className) => mdClassMap[className] ?? "")
+  .filter(Boolean)
+  .join(' ');
+
+const projectOrder = new Map([
+  "rag-rbac-chatbot",
+  "diffuse-refactor",
+  "multi-agent-production-incident-response-system",
+  "clinic-voice-agent",
+  "sentinelmesh",
+].map((name, index) => [name, index]));
+
+const orderedProjects = [...projects].sort((a, b) => {
+  const aIndex = projectOrder.get(a.name) ?? Number.MAX_SAFE_INTEGER;
+  const bIndex = projectOrder.get(b.name) ?? Number.MAX_SAFE_INTEGER;
+
+  return aIndex - bIndex || a.name.localeCompare(b.name);
+});
 ---
 
 <Layout title={`${basics.name} | Systems Architect`}>
-  <TooltipProvider client:load>
-    <main class="min-h-screen bg-[#0a0a0a] text-foreground p-4 md:p-8 lg:p-12 font-mono">
+  <main class="min-h-screen bg-[#0a0a0a] text-foreground p-4 md:p-8 lg:p-12 font-mono">
       {/* Background Grid Decoration */}
       <div class="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" 
            style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 40px 40px;">
@@ -62,40 +97,39 @@ const projectSpans = grid_config?.project_spans || {};
         </header>
 
         {/* Bento Grid */}
-        <div class="grid grid-cols-1 md:grid-cols-4 auto-rows-[220px] gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 auto-rows-[200px] items-stretch gap-4">
           
           {/* Profile - Hero Tile */}
           <div class="md:col-span-3 md:row-span-2">
-            <ProfileCard basics={basics} client:load />
+            <ProfileCard basics={basics} skillTags={skill_tags} statusBlock={STATUS_BLOCK} activityBlock={activity_block} latestCommit={latestCommit} client:load />
           </div>
 
           {/* Telemetry Tile */}
-          <div class={`col-span-1 ${weights.LIVE_TELEMETRY?.split(' ').map(c => 'md:' + c).join(' ')}`}>
-            <SystemStatus focus={summaryData.focus} commits={githubData.recentActivity} client:load />
+          <div class={`col-span-1 ${mdGridClasses(weights.LIVE_TELEMETRY)}`}>
+            <SystemStatus focus={current_focus_override || summaryData.focus} commits={githubData.recentActivity} client:load />
           </div>
 
           {/* Academic Tile */}
-          <div class={`col-span-1 ${weights.ACADEMIC_CREDENTIALS?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+          <div class={`col-span-1 ${mdGridClasses(weights.ACADEMIC_CREDENTIALS)}`}>
             <AcademicCard education={education} client:load />
           </div>
 
           {/* Professional History Tile */}
-          <div class={`col-span-1 ${weights.PROFESSIONAL_HISTORY?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+          <div class={`col-span-1 ${mdGridClasses(weights.PROFESSIONAL_HISTORY)}`}>
             <ProfessionalCard work={work} client:load />
           </div>
 
           {/* Tech Stack Tile */}
-          <div class={`col-span-1 ${weights.TECH_STACK?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+          <div class={`col-span-1 ${mdGridClasses(weights.TECH_STACK)}`}>
             <SkillsCard skills={skills} client:load />
           </div>
 
           {/* Projects Mapping */}
-          {projects.map((project) => (
-            <div class={`col-span-1 ${projectSpans[project.name] ? projectSpans[project.name].split(' ').map(c => 'md:' + c).join(' ') : "md:col-span-1 md:row-span-1"}`}>
+          {orderedProjects.map((project) => (
+            <div class={`col-span-1 ${projectSpans[project.name] ? mdGridClasses(projectSpans[project.name]) : "md:col-span-1 md:row-span-1"}`}>
               <ProjectCard project={project} client:load />
             </div>
           ))}
-
         </div>
 
         <footer class="mt-20 space-y-12">
@@ -103,7 +137,6 @@ const projectSpans = grid_config?.project_spans || {};
           <Handshake 
             email={basics.email} 
             linkedinUrl={linkedinUrl} 
-            client:load 
           />
 
           <div class="pt-8 pb-20 border-t border-primary/10 text-center">
@@ -117,10 +150,6 @@ const projectSpans = grid_config?.project_spans || {};
       {/* Floating Dock Navigation */}
       <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
         <div class="flex items-center gap-3 px-4 py-2 bg-black/60 backdrop-blur-xl border border-primary/20 rounded-full shadow-2xl shadow-primary/10">
-          <a href="#" class="p-2 rounded-full hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all group" title="Dashboard">
-            <LayoutGrid className="w-5 h-5" />
-          </a>
-          <div class="w-px h-4 bg-primary/20"></div>
           {basics.profiles.map((profile) => (
             <a 
               href={profile.url} 
@@ -132,13 +161,9 @@ const projectSpans = grid_config?.project_spans || {};
               {profile.network.toLowerCase() === 'github' ? <Github className="w-5 h-5" /> : <Linkedin className="w-5 h-5" />}
             </a>
           ))}
-          <a href={`mailto:${basics.email}`} class="p-2 rounded-full hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all" title="Contact">
-            <Settings className="w-5 h-5" />
-          </a>
         </div>
       </nav>
-    </main>
-  </TooltipProvider>
+  </main>
 </Layout>
 
 <style>
@@ -156,4 +181,5 @@ const projectSpans = grid_config?.project_spans || {};
   :global(::-webkit-scrollbar-thumb:hover) {
     background: rgba(var(--primary), 0.4);
   }
+
 </style>

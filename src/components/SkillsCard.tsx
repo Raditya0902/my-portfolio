@@ -28,15 +28,15 @@ export const SkillsCard: React.FC<SkillsProps> = ({ skills }) => {
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.5, delay: 0.1 }}
-      className="h-full"
+      className="h-full self-stretch"
     >
-      <Card className="h-full bg-card/50 backdrop-blur-sm border-primary/20 overflow-hidden flex flex-col">
+      <Card className="h-full self-stretch bg-card/50 backdrop-blur-sm border-primary/20 overflow-hidden flex flex-col">
         <CardHeader className="pb-3 border-b border-primary/10">
           <CardTitle className="text-sm font-mono uppercase tracking-widest flex items-center gap-2">
             <Cpu className="w-4 h-4" /> Tech_Stack
           </CardTitle>
         </CardHeader>
-        <div className="flex-grow overflow-y-auto max-h-[400px] scrollbar-terminal">
+        <div className="flex-grow overflow-y-auto scrollbar-terminal">
           <CardContent className="pt-4 space-y-4">
             {categories.map((category) => (
             <div key={category.name} className="space-y-2">

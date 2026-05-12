@@ -36,7 +36,7 @@ export const AcademicCard: React.FC<AcademicProps> = ({ education }) => {
             <GraduationCap className="w-4 h-4" /> Academic_Credentials
           </CardTitle>
         </CardHeader>
-        <div className="flex-grow overflow-y-auto max-h-[350px] scrollbar-terminal">
+        <div className="flex-grow overflow-y-auto scrollbar-terminal">
           <CardContent className="pt-4 space-y-4">
             {education.map((edu, idx) => (
               <div key={idx} className="relative pl-4 border-l border-primary/20 space-y-1">

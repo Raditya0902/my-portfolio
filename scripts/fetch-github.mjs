@@ -13,9 +13,9 @@ async function fetchGitHubData() {
   
   const headers = GITHUB_TOKEN ? { 
     Authorization: `token ${GITHUB_TOKEN}`,
-    Accept: 'application/vnd.github.v3+json'
+    Accept: 'application/vnd.github.mercy-preview+json'
   } : {
-    Accept: 'application/vnd.github.v3+json'
+    Accept: 'application/vnd.github.mercy-preview+json'
   };
 
   try {
@@ -38,6 +38,7 @@ async function fetchGitHubData() {
         url: repo.html_url,
         stars: repo.stargazers_count,
         language: repo.language,
+        topics: Array.isArray(repo.topics) ? repo.topics : [],
         updatedAt: repo.updated_at
       }));
 
@@ -46,13 +47,22 @@ async function fetchGitHubData() {
     if (fs.existsSync(mainPath)) {
       const mainData = JSON.parse(fs.readFileSync(mainPath, 'utf8'));
       
-      mainData.projects = portfolioRepos.map(repo => ({
-        name: repo.name,
-        description: repo.description || "Project documentation pending",
-        url: repo.html_url,
-        tech: [repo.language].filter(Boolean),
-        metrics: `${repo.stargazers_count} stars`
-      }));
+      mainData.projects = portfolioRepos.map(repo => {
+        const description = typeof repo.description === 'string' && repo.description.trim().length > 0
+          ? repo.description
+          : null;
+
+        return {
+          name: repo.name,
+          description,
+          url: repo.html_url,
+          topics: Array.isArray(repo.topics) ? repo.topics : [],
+          language: repo.language,
+          tech: [repo.language].filter(Boolean),
+          stargazers_count: repo.stargazers_count,
+          metrics: `${repo.stargazers_count} stars`
+        };
+      });
 
       // Clear manual spans to stabilize grid
       mainData.grid_config.project_spans = {};

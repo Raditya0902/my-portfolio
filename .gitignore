@@ -24,4 +24,4 @@ pnpm-debug.log*
 .idea/
 
 #my context
-AGENTS.md
+# AGENTS.md removed from ignore to track history
