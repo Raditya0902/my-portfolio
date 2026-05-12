@@ -1,6 +1,14 @@
 {
-  "lastUpdate": "2026-05-12T07:50:31.650Z",
+  "lastUpdate": "2026-05-12T08:48:01.886Z",
   "pinnedRepos": [
+    {
+      "name": "my-portfolio",
+      "description": null,
+      "url": "https://github.com/Raditya0902/my-portfolio",
+      "stars": 0,
+      "language": "TypeScript",
+      "updatedAt": "2026-05-12T08:34:12Z"
+    },
     {
       "name": "Raditya0902",
       "description": null,
@@ -40,15 +48,38 @@
       "stars": 0,
       "language": "Python",
       "updatedAt": "2026-05-07T19:45:37Z"
-    },
-    {
-      "name": "cse539-project",
-      "description": null,
-      "url": "https://github.com/Raditya0902/cse539-project",
-      "stars": 0,
-      "language": "Python",
-      "updatedAt": "2026-05-07T00:50:19Z"
     }
   ],
-  "recentActivity": []
+  "recentActivity": [
+    {
+      "repo": "Raditya0902/my-portfolio",
+      "message": "update main.json",
+      "url": "https://github.com/Raditya0902/my-portfolio/commit/1aaad9756e13f9eaa36c506df6bfb26a8183abf7",
+      "timestamp": "2026-05-12T01:33:40.000-07:00"
+    },
+    {
+      "repo": "Raditya0902/my-portfolio",
+      "message": "feat: initial system architecture and dashboard",
+      "url": "https://github.com/Raditya0902/my-portfolio/commit/801d0bf1daf57d9d5caa0ead31f610df241738b5",
+      "timestamp": "2026-05-12T01:03:46.000-07:00"
+    },
+    {
+      "repo": "Raditya0902/Raditya0902",
+      "message": "Update GitHub stats images in README.md",
+      "url": "https://github.com/Raditya0902/Raditya0902/commit/d735f0f04e0fa7080416ad4e014591a07aa5e210",
+      "timestamp": "2026-05-11T21:17:40.000-07:00"
+    },
+    {
+      "repo": "Raditya0902/Raditya0902",
+      "message": "Update project links in README.md",
+      "url": "https://github.com/Raditya0902/Raditya0902/commit/44be2a50f923cc50fc0a1f65ba1068e1b84d44b0",
+      "timestamp": "2026-05-11T21:13:49.000-07:00"
+    },
+    {
+      "repo": "Raditya0902/Raditya0902",
+      "message": "Revise README with new content and layout\n\nUpdated personal introduction, added tech stack, and featured projects sections.",
+      "url": "https://github.com/Raditya0902/Raditya0902/commit/6b222fe6348ecdc239711739d3bf0b7ae73ddd71",
+      "timestamp": "2026-05-11T21:11:37.000-07:00"
+    }
+  ]
 }
