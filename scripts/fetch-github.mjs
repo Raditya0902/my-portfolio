@@ -71,51 +71,50 @@ async function fetchGitHubData() {
       console.log(`Successfully updated ${mainData.projects.length} projects in main.json`);
     }
 
-    // 3. Fetch recent contributions (commits) for the status card
-    // The events API can be unreliable for commit messages, so we'll use a search or specific repo fetch if needed.
-    // For now, let's try to get the most recent commits from the user's public activity.
-    const searchResponse = await fetch(`https://api.github.com/search/commits?q=author:${GITHUB_USERNAME}&sort=author-date&order=desc&per_page=5`, { 
-      headers: {
-        ...headers,
-        'Accept': 'application/vnd.github.v3+json'
-      } 
-    });
-    const searchData = await searchResponse.json();
+    // 3. Fetch recent commits across all repos (not just portfolio-tagged)
+    console.log('--- Fetching Recent Commits (Direct Repo Access) ---');
     
-    let recentActivity = [];
-    if (searchData.items && Array.isArray(searchData.items)) {
-      recentActivity = searchData.items.map(item => ({
-        repo: item.repository.full_name,
-        message: item.commit.message,
-        url: item.html_url,
-        timestamp: item.commit.author.date
-      }));
-    } else {
-      console.warn('Commit search failed, falling back to events API:', searchData);
-      const eventsEndpoint = GITHUB_TOKEN 
-        ? `https://api.github.com/users/${GITHUB_USERNAME}/events`
-        : `https://api.github.com/users/${GITHUB_USERNAME}/events/public`;
+    // Fetch 5 most recently pushed repos to find where activity is
+    const reposByPushedResponse = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`, { headers });
+    const activeRepos = await reposByPushedResponse.json();
+
+    let allRecentCommits = [];
+
+    if (Array.isArray(activeRepos)) {
+      const commitPromises = activeRepos.map(async (repo) => {
+        try {
+          const commitsResponse = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=5`, { headers });
+          const commits = await commitsResponse.json();
+          
+          if (Array.isArray(commits)) {
+            return commits.map(c => ({
+              repo: repo.full_name,
+              sha: c.sha.substring(0, 7),
+              message: c.commit.message,
+              url: c.html_url,
+              timestamp: c.commit.author.date
+            }));
+          }
+        } catch (err) {
+          console.error(`Error fetching commits for ${repo.name}:`, err);
+        }
+        return [];
+      });
+
+      const results = await Promise.all(commitPromises);
+      allRecentCommits = results.flat();
       
-      const eventsResponse = await fetch(eventsEndpoint, { headers });
-      const events = await eventsResponse.json();
+      // Sort by timestamp descending
+      allRecentCommits.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
       
-      if (Array.isArray(events)) {
-        const pushEvents = events.filter(e => e.type === 'PushEvent').slice(0, 5);
-        recentActivity = pushEvents.map(event => ({
-          repo: event.repo.name,
-          message: event.payload.commits?.[0]?.message || 'Pushed commits',
-          url: event.payload.commits?.[0] 
-            ? `https://github.com/${event.repo.name}/commit/${event.payload.commits[0].sha}`
-            : `https://github.com/${event.repo.name}/commits/${event.payload.ref.split('/').pop()}`,
-          timestamp: event.created_at
-        }));
-      }
+      // Take the 10 most recent across all repos to ensure enough data for filters
+      allRecentCommits = allRecentCommits.slice(0, 10);
     }
 
     const latestStatus = {
       lastUpdate: new Date().toISOString(),
       pinnedRepos,
-      recentActivity
+      recentActivity: allRecentCommits
     };
 
     const outputDir = path.join(__dirname, '../src/content/status');
@@ -128,7 +127,7 @@ async function fetchGitHubData() {
       JSON.stringify(latestStatus, null, 2)
     );
 
-    console.log('Successfully updated GitHub data at src/content/status/github-data.json');
+    console.log(`Successfully updated GitHub data with ${allRecentCommits.length} recent commits.`);
   } catch (error) {
     console.error('Error fetching GitHub data:', error);
     // Ensure the build doesn't fail, but log the error
