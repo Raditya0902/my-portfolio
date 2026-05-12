@@ -1,0 +1,166 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { ProfileCard } from '../components/ProfileCard';
+import { SkillsCard } from '../components/SkillsCard';
+import { ProfessionalCard } from '../components/ProfessionalCard';
+import { AcademicCard } from '../components/AcademicCard';
+import { ProjectCard } from '../components/ProjectCard';
+import { SystemStatus } from '../components/SystemStatus';
+import { getEntry } from 'astro:content';
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Github, Linkedin, Settings, LayoutGrid } from 'lucide-react';
+import summaryData from '../content/status/summary.json';
+import githubData from '../content/status/github-data.json';
+
+const portfolioEntry = await getEntry('portfolio', 'main');
+if (!portfolioEntry) {
+  throw new Error('Could not find portfolio data');
+}
+
+const { basics, education, skills, work, projects, grid_config } = portfolioEntry.data;
+
+const lastSync = new Date().toISOString();
+
+// Map layout weights from config
+const weights = grid_config?.layout_weights || {
+  ACADEMIC_CREDENTIALS: "col-span-1 row-span-1",
+  PROFESSIONAL_HISTORY: "col-span-2 row-span-1",
+  TECH_STACK: "col-span-2 row-span-1",
+  LIVE_TELEMETRY: "col-span-1 row-span-1"
+};
+
+const projectSpans = grid_config?.project_spans || {};
+---
+
+<Layout title={`${basics.name} | Systems Architect`}>
+  <TooltipProvider client:load>
+    <main class="min-h-screen bg-[#0a0a0a] text-foreground p-4 md:p-8 lg:p-12 font-mono">
+      {/* Background Grid Decoration */}
+      <div class="fixed inset-0 z-0 opacity-[0.03] pointer-events-none" 
+           style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 40px 40px;">
+      </div>
+
+      <div class="max-w-7xl mx-auto relative z-10">
+        {/* Header Section */}
+        <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-primary/10 pb-8">
+          <div>
+            <div class="flex items-center gap-3 text-primary mb-2">
+              <span class="text-xs uppercase tracking-[0.3em] font-bold">Terminal_Session: Active</span>
+              <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+            </div>
+            <h1 class="text-4xl md:text-6xl font-black tracking-tighter uppercase">
+              {basics.name}
+            </h1>
+          </div>
+          <div class="text-right font-mono text-[10px] text-muted-foreground uppercase leading-relaxed">
+            <p>Access_Level: ADMIN</p>
+            <p>Node_Status: ENCRYPTED</p>
+            <p>Last_Sync: {lastSync}</p>
+          </div>
+        </header>
+
+        {/* Bento Grid */}
+        <div class="grid grid-cols-1 md:grid-cols-4 auto-rows-[220px] gap-4">
+          
+          {/* Profile - Hero Tile */}
+          <div class="md:col-span-3 md:row-span-2">
+            <ProfileCard basics={basics} client:load />
+          </div>
+
+          {/* Telemetry Tile */}
+          <div class={`col-span-1 ${weights.LIVE_TELEMETRY?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+            <SystemStatus focus={summaryData.focus} commits={githubData.recentActivity} client:load />
+          </div>
+
+          {/* Academic Tile */}
+          <div class={`col-span-1 ${weights.ACADEMIC_CREDENTIALS?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+            <AcademicCard education={education} client:load />
+          </div>
+
+          {/* Professional History Tile */}
+          <div class={`col-span-1 ${weights.PROFESSIONAL_HISTORY?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+            <ProfessionalCard work={work} client:load />
+          </div>
+
+          {/* Tech Stack Tile */}
+          <div class={`col-span-1 ${weights.TECH_STACK?.split(' ').map(c => 'md:' + c).join(' ')}`}>
+            <SkillsCard skills={skills} client:load />
+          </div>
+
+          {/* Projects Mapping */}
+          {projects.map((project) => (
+            <div class={`col-span-1 ${projectSpans[project.name] ? projectSpans[project.name].split(' ').map(c => 'md:' + c).join(' ') : "md:col-span-1 md:row-span-1"}`}>
+              <ProjectCard project={project} client:load />
+            </div>
+          ))}
+
+        </div>
+
+        <footer class="mt-20 space-y-12">
+          {/* Contact / Handshake CTA */}
+          <div class="max-w-4xl mx-auto">
+            <div class="h-full bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-center p-12 text-center group hover:bg-primary/10 transition-all cursor-pointer overflow-hidden relative">
+              <div class="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity z-0">
+                <div class="w-full h-full" style="background-image: repeating-linear-gradient(45deg, var(--primary) 0, var(--primary) 1px, transparent 0, transparent 50%); background-size: 10px 10px;"></div>
+              </div>
+              <div class="relative z-10 space-y-4">
+                <p class="text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold">Initialize_Handshake</p>
+                <h3 class="text-2xl md:text-3xl font-black group-hover:text-primary transition-colors uppercase leading-tight italic">
+                  "Build the future of Agentic Systems"
+                </h3>
+                <p class="text-xs text-[oklch(0.7_0.05_250)] font-mono uppercase tracking-widest">Awaiting_Connection_Request...</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-8 pb-20 border-t border-primary/10 text-center">
+            <p class="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
+              &copy; {new Date().getFullYear()} ADITYA RALLAPALLI // BUILT_WITH_ASTRO_V6 // TAILWIND_V4 // SYSTEM_STABLE
+            </p>
+          </div>
+        </footer>
+      </div>
+
+      {/* Floating Dock Navigation */}
+      <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div class="flex items-center gap-3 px-4 py-2 bg-black/60 backdrop-blur-xl border border-primary/20 rounded-full shadow-2xl shadow-primary/10">
+          <a href="#" class="p-2 rounded-full hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all group" title="Dashboard">
+            <LayoutGrid className="w-5 h-5" />
+          </a>
+          <div class="w-px h-4 bg-primary/20"></div>
+          {basics.profiles.map((profile) => (
+            <a 
+              href={profile.url} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              class="p-2 rounded-full hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all"
+              title={profile.network}
+            >
+              {profile.network.toLowerCase() === 'github' ? <Github className="w-5 h-5" /> : <Linkedin className="w-5 h-5" />}
+            </a>
+          ))}
+          <a href={`mailto:${basics.email}`} class="p-2 rounded-full hover:bg-primary/20 text-muted-foreground hover:text-primary transition-all" title="Contact">
+            <Settings className="w-5 h-5" />
+          </a>
+        </div>
+      </nav>
+    </main>
+  </TooltipProvider>
+</Layout>
+
+<style>
+  /* Custom scrollbar for a more "system" feel */
+  :global(::-webkit-scrollbar) {
+    width: 4px;
+  }
+  :global(::-webkit-scrollbar-track) {
+    background: transparent;
+  }
+  :global(::-webkit-scrollbar-thumb) {
+    background: rgba(var(--primary), 0.2);
+    border-radius: 10px;
+  }
+  :global(::-webkit-scrollbar-thumb:hover) {
+    background: rgba(var(--primary), 0.4);
+  }
+</style>

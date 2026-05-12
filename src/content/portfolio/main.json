@@ -1,0 +1,130 @@
+{
+  "grid_config": {
+    "layout_weights": {
+      "ACADEMIC_CREDENTIALS": "col-span-1 row-span-1",
+      "PROFESSIONAL_HISTORY": "col-span-2 row-span-1",
+      "TECH_STACK": "col-span-2 row-span-1",
+      "LIVE_TELEMETRY": "col-span-1 row-span-1"
+    },
+    "project_spans": {
+      "Multi-Agent Production Incident Response System": "col-span-2 row-span-2",
+      "RAG RBAC Chatbot": "col-span-1 row-span-1",
+      "Real-Time Graph Analytics Pipeline": "col-span-1 row-span-1"
+    }
+  },
+  
+  "basics": {
+    "name": "Aditya Rallapalli",
+    "label": "AI/ML Engineer & Systems Architect",
+    "email": "arallapa@asu.edu",
+    "phone": "+1 (480) 995-0109",
+    "url": "https://my-portfolio-steel-mu-uyd4gsi9wv.vercel.app/",
+    "summary": "MS Data Science student at ASU building agentic AI systems, enterprise RAG pipelines, and distributed infrastructure.",
+    "location": "Tempe, AZ",
+    "profiles": [
+      {
+        "network": "LinkedIn",
+        "username": "aditya-rallapalli",
+        "url": "https://www.linkedin.com/in/aditya-rallapalli/"
+      },
+      {
+        "network": "GitHub",
+        "username": "Raditya0902",
+        "url": "https://github.com/Raditya0902/"
+      }
+    ]
+  },
+  "education": [
+    {
+      "institution": "Arizona State University",
+      "area": "MS - Data Science, Analytics, and Engineering",
+      "score": "4.00",
+      "startDate": "2025-01-01",
+      "endDate": "2026-12-31",
+      "courses": ["Data Mining", "Data Processing at Scale", "Natural Language Processing", "Statistics"]
+    },
+    {
+      "institution": "National Institute of Technology, Manipur",
+      "area": "Bachelor of Technology - Electronics and Communication Engineering",
+      "score": "8.17",
+      "startDate": "2020-12-01",
+      "endDate": "2024-05-31",
+      "courses": ["Data Structures", "Algorithms", "Operating Systems", "DBMS", "Computer Networks"]
+    }
+  ],
+  "skills": {
+    "languages": ["Python", "TypeScript", "JavaScript", "Java", "C/C++"],
+    "ai_ml": ["LLMs", "LangChain", "LangGraph", "HuggingFace", "RAG", "Transformers", "Fine-tuning", "RAGAS evals"],
+    "infrastructure": ["FastAPI", "Docker", "Kubernetes", "Apache Kafka", "Redis", "AWS", "Apache Spark"],
+    "security": ["Prompt injection defense", "Llama Guard", "HITL testing", "PII redaction", "RBAC"],
+    "databases": ["PostgreSQL", "ChromaDB", "Neo4j", "MongoDB"]
+  },
+  "work": [
+    {
+      "company": "Open Source Contributor",
+      "position": "RAGAS, ChromaDB, LangChain",
+      "startDate": "2024-05-01",
+      "endDate": "2026-05-11",
+      "summary": "9 contributions across eval frameworks, vector databases, and LLM tooling.",
+      "highlights": [
+        "RAGAS: FactualCorrectness recall computation, CustomNodeFilter pre-chunking",
+        "ChromaDB: Fixed missing HNSW ids in filtered queries; HNSW state persistence",
+        "LangChain: ToolRuntime regression tests and Qdrant async/await documentation"
+      ]
+    },
+    {
+      "company": "LetsGrowMore",
+      "position": "Data Science and Web Development Intern",
+      "startDate": "2024-08-01",
+      "endDate": "2024-09-30",
+      "summary": "Implemented deep learning pipelines and computer vision disease detection systems.",
+      "highlights": [
+        "Achieved 90.78% pixel accuracy on CamVid dataset using DeepLabv3+",
+        "Developed paddy leaf disease detection with 92.8% classification accuracy",
+        "Deployed full-stack MERN apps with integrated ML models"
+      ]
+    },
+    {
+      "company": "BSNL LTD",
+      "position": "GSM Intern",
+      "startDate": "2024-05-01",
+      "endDate": "2024-06-30",
+      "summary": "Worked with Global System for Mobile Communications (GSM) and Optical Fiber Communication (OFC) infrastructure."
+    }
+  ],
+  "projects": [
+    {
+      "name": "Multi-Agent Production Incident Response System",
+      "description": "7-agent LangGraph pipeline autonomously diagnosing production incidents and opening PRs in ~90 seconds.",
+      "url": "https://github.com/Raditya0902/multi-agent-production-incident-response-system",
+      "tech": ["Python", "LangGraph", "Kubernetes", "FastAPI", "ChromaDB"],
+      "metrics": "100% patch correctness across benchmark scenarios"
+    },
+    {
+      "name": "RAG RBAC Chatbot",
+      "description": "Enterprise AI Security System with RBAC enforced at the vector-store level.",
+      "url": "https://github.com/Raditya0902/rag-rbac-chatbot",
+      "tech": ["ChromaDB", "BM25", "Llama Guard 3", "Redis", "JWT"],
+      "metrics": "RAGAS faithfulness 0.9116"
+    },
+    {
+      "name": "Real-Time Graph Analytics Pipeline",
+      "description": "Distributed streaming system processing ~150 msg/sec at <200ms latency.",
+      "url": "https://github.com/Raditya0902/Real-Time-Graph-Analytics-Pipeline",
+      "tech": ["Apache Kafka", "Neo4j GDS", "Kubernetes", "Docker"]
+    }
+  ],
+  "achievements": [
+    {
+      "title": "LeetCode",
+      "value": "300+ problems solved",
+      "url": "https://leetcode.com/u/Aditya_1309/"
+    },
+    {
+      "title": "Goldman Sachs SWE Virtual Experience",
+      "date": "2023",
+      "summary": "Focused on security software development and cryptanalysis."
+    }
+  ]
+}
+
