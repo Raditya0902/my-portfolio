@@ -7,7 +7,7 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "prebuild": "node scripts/fetch-github.mjs",
+    "prebuild": "node scripts/fetch-github.mjs && node scripts/summarize-commits.mjs",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
