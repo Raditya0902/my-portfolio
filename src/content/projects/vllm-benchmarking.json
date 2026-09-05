@@ -1,0 +1,69 @@
+{
+  "repo": "Raditya0902/vLLM-inference-benchmarking-harness",
+  "slug": "vllm-benchmarking",
+  "title": "Understanding the cost of inference",
+  "categories": [
+    "ML Engineering",
+    "Software Engineering"
+  ],
+  "summary": "A reproducible comparison of vLLM serving configurations and a serial HuggingFace baseline on the same GPU and workload.",
+  "technologies": [
+    "Python",
+    "vLLM",
+    "Prometheus",
+    "Grafana"
+  ],
+  "signal": "Throughput, latency, memory, and cost.",
+  "decision": "Audit the baseline and quantization kernels before attributing performance differences to the serving engine.",
+  "kind": "Independent project",
+  "featuredOrder": 3,
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/vLLM-inference-benchmarking-harness/blob/HEAD/README.md"
+    },
+    {
+      "label": "Methodology and full benchmark results",
+      "url": "https://github.com/Raditya0902/vLLM-inference-benchmarking-harness/blob/HEAD/reports/README.md"
+    }
+  ],
+  "study": {
+    "problem": "How much do batching and quantized kernels change LLM serving throughput, latency, memory use, and cost?",
+    "built": "Built a FastAPI baseline with an OpenAI-compatible streaming endpoint, scripts for concurrency sweeps, a retrospective cost model, and Prometheus/Grafana monitoring. Used vLLM\u2019s vendored load generator for consistent request measurement.",
+    "flow": [
+      "ShareGPT requests",
+      "Concurrency sweep",
+      "Serving engines",
+      "Metrics & cost"
+    ],
+    "architecture": "The same benchmark client calls vLLM or a serial HuggingFace server. Runs compare fp16, AWQ, and GPTQ at concurrency 1, 4, 8, 16, and 32. Reports translate measured output throughput into cost using the recorded GPU rental rate.",
+    "decisions": [
+      {
+        "title": "A fair serial baseline",
+        "body": "Corrected dtype and attention defaults that had silently slowed the baseline. Kept serialization and lack of continuous batching as the intended comparison."
+      },
+      {
+        "title": "Check the actual kernel",
+        "body": "Investigated an AWQ kernel-configuration problem. The report documents how using awq_marlin changed the performance ranking."
+      },
+      {
+        "title": "Show the memory tradeoff",
+        "body": "The baseline uses less peak GPU memory because it does not reserve a large KV-cache pool. Higher concurrent throughput comes with a different memory allocation strategy."
+      }
+    ],
+    "results": [
+      {
+        "label": "AWQ output throughput",
+        "value": "2,187.9 tok/s",
+        "context": "Llama-3.2-3B-Instruct, RTX A5000 24 GB, vLLM 0.8.5, concurrency 32, 100 ShareGPT requests; repository-reported result."
+      },
+      {
+        "label": "Baseline peak memory",
+        "value": "6.8 GiB",
+        "context": "Compared with 21.1 GiB for AWQ. The serial baseline processes one request at a time; this is not an equal-batching comparison."
+      }
+    ],
+    "limitations": "Measurements describe the recorded hardware, models, workloads, and engine version. Raw run outputs are git-ignored; the published report contains the result tables. Cost estimates use the historical rental price, not a current cloud quote.",
+    "lesson": "Performance work starts with understanding the baseline and the configuration actually executed."
+  }
+}

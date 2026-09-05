@@ -1,0 +1,24 @@
+{
+  "repo": "Raditya0902/multi-agent-production-incident-response-system",
+  "slug": "incident-response",
+  "title": "Incident response with human review",
+  "categories": [
+    "AI Engineering",
+    "Software Engineering"
+  ],
+  "summary": "An agent workflow for diagnosis, patch generation, testing, and GitHub pull requests, with a human approval gate.",
+  "technologies": [
+    "LangGraph",
+    "Groq",
+    "GitHub API"
+  ],
+  "signal": "Diagnosis \u2192 review \u2192 tested patch.",
+  "decision": "Pause for human review before executing a proposed change.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/multi-agent-production-incident-response-system/blob/HEAD/README.md"
+    }
+  ]
+}

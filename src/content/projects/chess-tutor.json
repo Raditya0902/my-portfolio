@@ -1,0 +1,23 @@
+{
+  "repo": "Raditya0902/chess-fundamentals-rag-tutor",
+  "slug": "chess-tutor",
+  "title": "Chess Fundamentals Tutor",
+  "categories": [
+    "AI Engineering"
+  ],
+  "summary": "A multimodal tutor combining text retrieval, board-position similarity, and structured coaching.",
+  "technologies": [
+    "LangGraph",
+    "ChromaDB",
+    "FastAPI"
+  ],
+  "signal": "Text and board-position retrieval.",
+  "decision": "Surface uncertainty when source moves or extracted positions are not verified.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/chess-fundamentals-rag-tutor/blob/HEAD/README.md"
+    }
+  ]
+}

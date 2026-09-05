@@ -1,0 +1,24 @@
+{
+  "repo": "Raditya0902/sentinelmesh",
+  "slug": "sentinelmesh",
+  "title": "SentinelMesh",
+  "categories": [
+    "AI Engineering",
+    "Software Engineering"
+  ],
+  "summary": "A Go inspection proxy and LangGraph orchestration layer for policy-controlled agent requests.",
+  "technologies": [
+    "Go",
+    "LangGraph",
+    "FastAPI"
+  ],
+  "signal": "Ingress and egress policy checks.",
+  "decision": "Inspect requests and buffered outputs; treat pattern detection as a bounded defense.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/sentinelmesh/blob/HEAD/README.md"
+    }
+  ]
+}

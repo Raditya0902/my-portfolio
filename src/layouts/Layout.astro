@@ -1,31 +1,53 @@
 ---
 import '../styles/global.css';
-
-interface Props {
-	title: string;
-	description?: string;
-}
-
-const { title, description = "Aditya Rallapalli - AI/ML Engineer & Systems Architect" } = Astro.props;
+import { getEntry } from 'astro:content';
+interface Props { title?: string; description?: string; noindex?: boolean }
+const { title, description, noindex = false } = Astro.props;
+const entry = await getEntry('portfolio', 'main');
+if (!entry) throw new Error('Missing portfolio profile');
+const { basics } = entry.data;
+const pageTitle = title ? `${title} | ${basics.name}` : `${basics.name} | Software, Data & ML Engineering`;
+const pageDescription = description ?? basics.summary;
+const canonical = new URL(Astro.url.pathname, basics.url);
+const isProjects = Astro.url.pathname.startsWith('/projects');
+const previewImage = Astro.url.pathname === '/' ? new URL('/social-preview.png', basics.url) : undefined;
 ---
-
 <!doctype html>
-<html lang="en" class="dark">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
-		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
-	</head>
-	<body class="selection:bg-primary/30 selection:text-primary-foreground">
-		<slot />
-	</body>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={pageDescription} />
+    <meta name="theme-color" content="#111111" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={basics.name} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    {previewImage && <><meta property="og:image" content={previewImage} /><meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:alt" content="Aditya Rallapalli. Software, data, and machine learning. MS Data Science at Arizona State University." /><meta name="twitter:image" content={previewImage} /><meta name="twitter:image:alt" content="Aditya Rallapalli. Software, data, and machine learning." /></>}
+    <meta name="twitter:card" content={previewImage ? 'summary_large_image' : 'summary'} />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <header class="site-header shell">
+      <a class="wordmark" href="/" aria-label={`${basics.name}, home`}><span class="monogram" aria-hidden="true">ar<span>.</span></span><span>Aditya Rallapalli</span></a>
+      <nav aria-label="Main navigation">
+        <a href="/projects" aria-current={isProjects ? 'page' : undefined}>Projects</a>
+        <a href="/#experience">Experience</a>
+        <a href="/#contact">Contact <span aria-hidden="true">↗</span></a>
+      </nav>
+    </header>
+    <main id="main" tabindex="-1"><slot /></main>
+    <footer class="site-footer shell">
+      <a class="footer-name" href="/">Aditya Rallapalli<span class="accent">.</span></a>
+      <p>© {new Date().getUTCFullYear()} · Built with Astro</p>
+      <a href="#main">Back to top <span aria-hidden="true">↑</span></a>
+    </footer>
+  </body>
 </html>
-
-<style is:global>
-	:root {
-		color-scheme: dark;
-	}
-</style>

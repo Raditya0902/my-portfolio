@@ -1,14 +1,10 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
 import tailwindcss from '@tailwindcss/vite';
-import react from '@astrojs/react';
+import profile from './src/content/portfolio/main.json' with { type: 'json' };
 
-// https://astro.build/config
 export default defineConfig({
-  vite: {
-    plugins: [tailwindcss()]
-  },
-
-  integrations: [react()]
+  site: profile.basics.url,
+  trailingSlash: 'never',
+  vite: { plugins: [tailwindcss()] },
 });

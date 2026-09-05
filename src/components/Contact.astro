@@ -1,0 +1,9 @@
+---
+import type { Portfolio } from '../lib/content-schemas';
+interface Props { basics: Portfolio['basics'] }
+const { basics } = Astro.props;
+---
+<section class="contact-section shell section" id="contact" aria-labelledby="contact-heading">
+  <div><p class="eyebrow">08 / Get in touch</p><h2 id="contact-heading">Let’s build something<br />that holds up.</h2><p>Exploring opportunities across software engineering,<br class="desktop-break" /> data science, machine learning, and AI.</p></div>
+  <div class="contact-links"><a class="email-link" href={`mailto:${basics.email}`}>Say hello <span aria-hidden="true">↗</span></a><a class="email-address" href={`mailto:${basics.email}`}>{basics.email}</a><div class="social-links">{basics.profiles.map((profile) => <a href={profile.url}>{profile.network} <span aria-hidden="true">↗</span></a>)}</div></div>
+</section>

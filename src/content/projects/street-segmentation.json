@@ -1,0 +1,23 @@
+{
+  "repo": "Raditya0902/Street-View-Semantic-Segmentation",
+  "slug": "street-segmentation",
+  "title": "Street-view semantic segmentation",
+  "categories": [
+    "ML Engineering"
+  ],
+  "summary": "Semantic segmentation of CamVid street scenes using DeepLabv3+ and a ResNet-18 backbone.",
+  "technologies": [
+    "MATLAB",
+    "DeepLabv3+",
+    "CamVid"
+  ],
+  "signal": "Scene understanding at pixel level.",
+  "decision": "Predict a class for each pixel instead of a single label for an image.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/Street-View-Semantic-Segmentation/blob/HEAD/README.md"
+    }
+  ]
+}

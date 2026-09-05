@@ -1,0 +1,73 @@
+{
+  "repo": "Raditya0902/rag-rbac-chatbot",
+  "slug": "rag-rbac",
+  "title": "Retrieval with an authorization boundary",
+  "categories": [
+    "AI Engineering",
+    "Software Engineering"
+  ],
+  "summary": "An internal knowledge assistant with department-scoped retrieval, hybrid search, streaming responses, and evaluation.",
+  "technologies": [
+    "FastAPI",
+    "LangChain",
+    "ChromaDB",
+    "Redis"
+  ],
+  "signal": "Access control belongs in retrieval.",
+  "decision": "Enforce department permissions in retrieval, alongside authentication and output handling.",
+  "kind": "Independent project",
+  "featuredOrder": 6,
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/rag-rbac-chatbot/blob/HEAD/README.md"
+    },
+    {
+      "label": "Append-only evaluation log",
+      "url": "https://github.com/Raditya0902/rag-rbac-chatbot/blob/HEAD/EVAL_RESULTS.md"
+    },
+    {
+      "label": "Retrieval tests",
+      "url": "https://github.com/Raditya0902/rag-rbac-chatbot/blob/HEAD/tests/test_retrieval.py"
+    }
+  ],
+  "study": {
+    "problem": "A shared knowledge assistant must answer useful questions without retrieving documents the current user is not allowed to read.",
+    "built": "Built a RAG application with JWT authentication, Redis token revocation and conversation memory, department-scoped retrieval, BM25/vector search, cross-encoder reranking, and streaming responses.",
+    "flow": [
+      "Authenticated request",
+      "Scoped hybrid retrieval",
+      "Rerank & generate",
+      "Output handling"
+    ],
+    "architecture": "Requests pass through authentication, per-user rate limits, and input checks. Retrieval filters accessible namespaces before reranking. Redis stores conversation state and revoked tokens. Output handling includes PII redaction; optional Llama Guard adds another safety check.",
+    "decisions": [
+      {
+        "title": "Authorize before generation",
+        "body": "Department access is enforced at retrieval rather than relying on instructions to the model or a hidden UI control."
+      },
+      {
+        "title": "Measure the full question set",
+        "body": "The 25-question evaluation scored 0.9116 faithfulness. The 50-question run scored 0.7423 with a different judge model. Both belong in the results."
+      },
+      {
+        "title": "Separate evaluation from tests",
+        "body": "Automated tests cover retrieval, Redis, re-ingestion, and guardrails. They are distinct from the question sets used to evaluate answer quality."
+      }
+    ],
+    "results": [
+      {
+        "label": "50-question faithfulness",
+        "value": "0.7423",
+        "context": "Full recorded evaluation using llama-3.1-8b-instant for scoring; answer relevancy 0.6495."
+      },
+      {
+        "label": "25-question faithfulness",
+        "value": "0.9116",
+        "context": "Subset evaluated using llama-3.3-70b-versatile; answer relevancy 0.7346. Different samples and judges prevent a direct comparison."
+      }
+    ],
+    "limitations": "Model-judged scores depend on the question set and judge. Pattern-based guardrails and optional model checks do not establish comprehensive security or production readiness.",
+    "lesson": "The authorization boundary and evaluation conditions matter more than a single headline score."
+  }
+}

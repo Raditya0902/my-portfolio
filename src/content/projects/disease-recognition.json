@@ -1,0 +1,23 @@
+{
+  "repo": "Raditya0902/Disease-Recognition-Model",
+  "slug": "disease-recognition",
+  "title": "Plant disease recognition",
+  "categories": [
+    "ML Engineering"
+  ],
+  "summary": "A TensorFlow/Keras image-classification project developed during the LetsGrowMore internship.",
+  "technologies": [
+    "Python",
+    "TensorFlow",
+    "Keras"
+  ],
+  "signal": "Image-based disease classification.",
+  "decision": "Use a learned visual classifier to distinguish plant disease categories.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/Disease-Recognition-Model/blob/HEAD/README.md"
+    }
+  ]
+}

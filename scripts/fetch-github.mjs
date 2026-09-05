@@ -1,137 +1,80 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
+import { resolve, join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { z } from 'zod';
+import { catalogSchema, statusSchema } from '../src/lib/content-schemas.ts';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const root = fileURLToPath(new URL('../', import.meta.url));
+const apiRepo = z.object({
+  full_name: z.string(), html_url: z.url(), topics: z.array(z.string()).nullish(),
+  language: z.string().nullish(), stargazers_count: z.number().int().nonnegative().optional(),
+  updated_at: z.iso.datetime(), pushed_at: z.iso.datetime().nullable().optional(),
+});
+const apiCommit = z.object({
+  html_url: z.url(),
+  commit: z.object({ message: z.string(), author: z.object({ date: z.iso.datetime() }).nullable() }),
+});
 
-const GITHUB_USERNAME = 'Raditya0902';
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-
-async function fetchGitHubData() {
-  console.log('--- Fetching GitHub Data ---');
-  
-  const headers = GITHUB_TOKEN ? { 
-    Authorization: `token ${GITHUB_TOKEN}`,
-    Accept: 'application/vnd.github.mercy-preview+json'
-  } : {
-    Accept: 'application/vnd.github.mercy-preview+json'
-  };
-
-  try {
-    // 1. Fetch all repos to filter by topic
-    const reposResponse = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100`, { headers });
-    const allRepos = await reposResponse.json();
-
-    if (!Array.isArray(allRepos)) {
-      throw new Error('Failed to fetch repositories');
-    }
-
-    const portfolioRepos = allRepos.filter(repo => repo.topics?.includes('portfolio'));
-    console.log(`Discovered ${portfolioRepos.length} projects with 'portfolio' topic.`);
-
-    const pinnedRepos = portfolioRepos
-      .slice(0, 6)
-      .map(repo => ({
-        name: repo.name,
-        description: repo.description,
-        url: repo.html_url,
-        stars: repo.stargazers_count,
-        language: repo.language,
-        topics: Array.isArray(repo.topics) ? repo.topics : [],
-        updatedAt: repo.updated_at
-      }));
-
-    // 2. Update main.json with discovered projects
-    const mainPath = path.join(__dirname, '../src/content/portfolio/main.json');
-    if (fs.existsSync(mainPath)) {
-      const mainData = JSON.parse(fs.readFileSync(mainPath, 'utf8'));
-      
-      mainData.projects = portfolioRepos.map(repo => {
-        const description = typeof repo.description === 'string' && repo.description.trim().length > 0
-          ? repo.description
-          : null;
-
-        return {
-          name: repo.name,
-          description,
-          url: repo.html_url,
-          topics: Array.isArray(repo.topics) ? repo.topics : [],
-          language: repo.language,
-          tech: [repo.language].filter(Boolean),
-          stargazers_count: repo.stargazers_count,
-          metrics: `${repo.stargazers_count} stars`
-        };
-      });
-
-      // Clear manual spans to stabilize grid
-      mainData.grid_config.project_spans = {};
-      
-      fs.writeFileSync(mainPath, JSON.stringify(mainData, null, 2));
-      console.log(`Successfully updated ${mainData.projects.length} projects in main.json`);
-    }
-
-    // 3. Fetch recent commits across all repos (not just portfolio-tagged)
-    console.log('--- Fetching Recent Commits (Direct Repo Access) ---');
-    
-    // Fetch 5 most recently pushed repos to find where activity is
-    const reposByPushedResponse = await fetch(`https://api.github.com/users/${GITHUB_USERNAME}/repos?sort=pushed&per_page=5`, { headers });
-    const activeRepos = await reposByPushedResponse.json();
-
-    let allRecentCommits = [];
-
-    if (Array.isArray(activeRepos)) {
-      const commitPromises = activeRepos.map(async (repo) => {
-        try {
-          const commitsResponse = await fetch(`https://api.github.com/repos/${GITHUB_USERNAME}/${repo.name}/commits?per_page=5`, { headers });
-          const commits = await commitsResponse.json();
-          
-          if (Array.isArray(commits)) {
-            return commits.map(c => ({
-              repo: repo.full_name,
-              sha: c.sha.substring(0, 7),
-              message: c.commit.message,
-              url: c.html_url,
-              timestamp: c.commit.author.date
-            }));
-          }
-        } catch (err) {
-          console.error(`Error fetching commits for ${repo.name}:`, err);
-        }
-        return [];
-      });
-
-      const results = await Promise.all(commitPromises);
-      allRecentCommits = results.flat();
-      
-      // Sort by timestamp descending
-      allRecentCommits.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
-      
-      // Take the 10 most recent across all repos to ensure enough data for filters
-      allRecentCommits = allRecentCommits.slice(0, 10);
-    }
-
-    const latestStatus = {
-      lastUpdate: new Date().toISOString(),
-      pinnedRepos,
-      recentActivity: allRecentCommits
-    };
-
-    const outputDir = path.join(__dirname, '../src/content/status');
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
-    }
-
-    fs.writeFileSync(
-      path.join(outputDir, 'github-data.json'),
-      JSON.stringify(latestStatus, null, 2)
-    );
-
-    console.log(`Successfully updated GitHub data with ${allRecentCommits.length} recent commits.`);
-  } catch (error) {
-    console.error('Error fetching GitHub data:', error);
-    // Ensure the build doesn't fail, but log the error
+/**
+ * All network reads finish before a snapshot is eligible for publication.
+ * @param {unknown} catalogInput
+ * @param {{fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>, token?: string, now?: () => string}} options
+ */
+export async function fetchSnapshot(catalogInput, { fetchImpl = fetch, token = process.env.GITHUB_TOKEN, now = () => new Date().toISOString() } = {}) {
+  const catalog = catalogSchema.parse(catalogInput);
+  const headers = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
+  async function request(path) {
+    const response = await fetchImpl(`https://api.github.com${path}`, { headers, signal: AbortSignal.timeout(15000) });
+    if (!response.ok) throw new Error(`GitHub request failed (${response.status}): ${path}`);
+    return response.json();
   }
+  const owners = [...new Set(catalog.map((project) => project.repo.split('/')[0]))];
+  const allRepos = [];
+  for (const owner of owners) {
+    for (let page = 1; ; page += 1) {
+      const batch = z.array(apiRepo).parse(await request(`/users/${owner}/repos?per_page=100&page=${page}&sort=updated`));
+      allRepos.push(...batch);
+      if (batch.length < 100) break;
+      if (page >= 100) throw new Error('Repository pagination limit exceeded; preserving the previous snapshot');
+    }
+  }
+  const requested = new Set(catalog.map((project) => project.repo.toLowerCase()));
+  const selected = allRepos.filter((repo) => requested.has(repo.full_name.toLowerCase()));
+  const repositories = selected.map((repo) => ({
+    repo: repo.full_name, url: repo.html_url,
+    topics: (repo.topics ?? []).filter((topic) => topic.toLowerCase() !== 'portfolio'),
+    language: repo.language ?? null, stars: repo.stargazers_count ?? 0, updatedAt: repo.updated_at,
+  }));
+  const active = [...selected].filter((repo) => repo.pushed_at).sort((a, b) => b.pushed_at.localeCompare(a.pushed_at)).slice(0, 3);
+  const recentActivity = (await Promise.all(active.map(async (repo) => {
+    const commits = z.array(apiCommit).parse(await request(`/repos/${repo.full_name}/commits?per_page=3`));
+    return commits.filter((item) => item.commit.author).map((item) => ({ repo: repo.full_name, url: item.html_url, message: item.commit.message, timestamp: item.commit.author.date }));
+  }))).flat().sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 9);
+  return statusSchema.parse({ lastUpdate: now(), repositories, recentActivity });
 }
 
-fetchGitHubData();
+/** @param {{projectRoot?: string, fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>, token?: string, now?: () => string}} options */
+export async function refresh({ projectRoot = root, fetchImpl = fetch, token = process.env.GITHUB_TOKEN, now } = {}) {
+  const directory = join(projectRoot, 'src/content/projects');
+  const names = (await readdir(directory)).filter((name) => name.endsWith('.json')).sort();
+  const catalog = await Promise.all(names.map(async (name) => JSON.parse(await readFile(join(directory, name), 'utf8'))));
+  const snapshot = await fetchSnapshot(catalog, { fetchImpl, token, now });
+  const destination = join(projectRoot, 'src/content/status/github-data.json');
+  const temporary = `${destination}.${process.pid}.tmp`;
+  try {
+    await writeFile(temporary, `${JSON.stringify(snapshot, null, 2)}\n`);
+    await rename(temporary, destination);
+  } finally {
+    await unlink(temporary).catch((error) => { if (error.code !== 'ENOENT') throw error; });
+  }
+  return snapshot;
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
+  refresh().then((snapshot) => {
+    console.log(`Refreshed ${snapshot.repositories.length} curated repositories and ${snapshot.recentActivity.length} commits. Editorial content was preserved.`);
+  }).catch((error) => {
+    console.error(`Refresh failed; previous snapshot retained. ${error.message}`);
+    process.exitCode = 1;
+  });
+}

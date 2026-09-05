@@ -1,0 +1,41 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getPortfolio } from '../../lib/content';
+import { categories } from '../../lib/content-schemas';
+const { projects, featured } = await getPortfolio();
+---
+<Layout title="Projects" description="Explore Aditya Rallapalli’s software systems, data science studies, ML infrastructure, and AI applications, with six detailed engineering case studies.">
+  <div class="shell page-hero"><a class="breadcrumb" href="/">← Back home</a><p class="eyebrow">The project directory</p><h1>Different problems.<br /><span class="accent">The same curiosity.</span></h1><p class="lead">From a database built in Go to controlled model experiments. A selection of projects, with the decisions and evidence behind the work.</p></div>
+  <section class="shell directory" aria-label="Project directory">
+    <div class="filter-bar" role="group" aria-label="Filter projects by discipline" hidden>
+      {['All projects', ...categories].map((category, index) => <button type="button" data-filter={index === 0 ? 'all' : category} aria-pressed={index === 0 ? 'true' : 'false'}>{category}</button>)}
+    </div>
+    <p class="result-count" role="status" aria-live="polite" aria-atomic="true" data-featured-count={featured.length}><span id="project-count">{projects.length}</span> projects · {featured.length} engineering case studies</p>
+    <div class="project-grid" id="project-list">{projects.map((project) => <ProjectCard project={project} compact />)}</div>
+    <p id="empty-projects" class="muted" hidden>No projects match this discipline.</p>
+  </section>
+</Layout>
+<script>
+  const bar = document.querySelector<HTMLElement>('.filter-bar');
+  const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+  const cards = [...document.querySelectorAll<HTMLElement>('[data-project]')];
+  const count = document.querySelector<HTMLElement>('.result-count');
+  const empty = document.querySelector<HTMLElement>('#empty-projects');
+  if (bar && count && empty) {
+    bar.hidden = false;
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        const selected = button.dataset.filter;
+        let visible = 0;
+        for (const card of cards) {
+          card.hidden = selected !== 'all' && !card.dataset.categories?.split('|').includes(selected ?? '');
+          if (!card.hidden) visible += 1;
+        }
+        for (const item of buttons) item.setAttribute('aria-pressed', String(item === button));
+        count.textContent = selected === 'all' ? `${visible} projects · ${count.dataset.featuredCount} engineering case studies` : `${visible} ${selected} projects`;
+        empty.hidden = visible !== 0;
+      });
+    }
+  }
+</script>

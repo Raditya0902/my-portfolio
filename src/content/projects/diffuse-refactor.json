@@ -1,0 +1,24 @@
+{
+  "repo": "Raditya0902/diffuse-refactor",
+  "slug": "diffuse-refactor",
+  "title": "Diffusion for code refactoring",
+  "categories": [
+    "ML Engineering",
+    "AI Engineering"
+  ],
+  "summary": "A limited benchmark study of discrete diffusion decoding and dependency-aware unmasking for code refactoring.",
+  "technologies": [
+    "PyTorch",
+    "LLaDA",
+    "Transformers"
+  ],
+  "signal": "Exploring global code structure.",
+  "decision": "Compare structural coherence and AST similarity on a small controlled task set.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/diffuse-refactor/blob/HEAD/README.md"
+    }
+  ]
+}

@@ -1,20 +1,10 @@
 {
-  "grid_config": {
-    "layout_weights": {
-      "ACADEMIC_CREDENTIALS": "col-span-1 row-span-1",
-      "PROFESSIONAL_HISTORY": "col-span-1 row-span-1",
-      "TECH_STACK": "col-span-1 row-span-1",
-      "LIVE_TELEMETRY": "col-span-1 row-span-1"
-    },
-    "project_spans": {}
-  },
   "basics": {
     "name": "Aditya Rallapalli",
-    "label": "AI Agent  & Systems Engineer",
+    "label": "Software, data & ML engineering",
     "email": "aditya.rallapalli0902@gmail.com",
-    "phone": "+1 (480) 995-0109",
     "url": "https://my-portfolio-steel-mu-uyd4gsi9wv.vercel.app/",
-    "summary": "MS Data Science student at ASU building agentic AI systems, enterprise RAG pipelines, and production-grade backend systems.",
+    "summary": "MS Data Science student at Arizona State University, building reliable backend systems, data pipelines, and evaluated AI applications.",
     "location": "Tempe, AZ",
     "profiles": [
       {
@@ -27,28 +17,14 @@
         "username": "Raditya0902",
         "url": "https://github.com/Raditya0902/"
       }
-    ]
+    ],
+    "headline": "I build software systems, data pipelines, and machine learning applications."
   },
-  "current_focus_override": "Building production AI agent systems — multi-agent orchestration, LLM safety layers, and real-time voice pipelines.",
-  "skill_tags": [
-    "LangGraph",
-    "LLM Safety",
-    "Multi-Agent Systems",
-    "RAG",
-    "FastAPI",
-    "Kubernetes",
-    "Python",
-    "TypeScript"
+  "about": [
+    "I\u2019m Aditya, an MS student in Data Science, Analytics, and Engineering at Arizona State University. My work connects software engineering with applied machine learning: from database internals and model serving to experimentation and retrieval systems.",
+    "I enjoy the parts that make a system trustworthy: recovery after a failure, features that don\u2019t leak future data, and evaluations that reveal where a model falls short. I\u2019m exploring Software Engineer, Data Scientist, Machine Learning Engineer, and AI Engineer opportunities.",
+    "Away from the keyboard, I follow tennis and chess. I also built a chess tutor to explore how retrieval and structured reasoning can support a subject I enjoy."
   ],
-  "activity_block": {
-    "learning": "System Design · Distributed Systems · Concurrency · AWS",
-    "building": "OSS contributions · SentinelMesh · Clinic Voice Agent",
-    "leetcode": "300+ problems · Arrays · Trees · Graphs · DP"
-  },
-  "STATUS_BLOCK": {
-    "SEEKING": "AI/ML Engineering · Backend · Platform roles",
-    "STATUS": "Available · Dec 2026 graduation"
-  },
   "education": [
     {
       "institution": "Arizona State University",
@@ -78,184 +54,130 @@
       ]
     }
   ],
-  "skills": {
-    "languages": [
-      "Python",
-      "TypeScript",
-      "JavaScript",
-      "Java",
-      "C/C++"
-    ],
-    "ai_ml": [
-      "LLMs",
-      "LangChain",
-      "LangGraph",
-      "HuggingFace",
-      "RAG",
-      "Transformers",
-      "Fine-tuning",
-      "RAGAS evals"
-    ],
-    "infrastructure": [
-      "FastAPI",
-      "Docker",
-      "Kubernetes",
-      "Apache Kafka",
-      "Redis",
-      "AWS",
-      "Apache Spark"
-    ],
-    "security": [
-      "Prompt injection defense",
-      "Llama Guard",
-      "HITL testing",
-      "PII redaction",
-      "RBAC"
-    ],
-    "databases": [
-      "PostgreSQL",
-      "ChromaDB",
-      "Neo4j",
-      "MongoDB"
-    ]
-  },
-  "work": [
+  "skills": [
     {
-      "title": "Open Source Contributor",
-      "organization": "LlamaIndex · LangChain · ChromaDB",
-      "date": "05.2026 — Present",
-      "role": "OSS Engineering Contributor",
-      "description": "Merged bug fixes and regression tests across LlamaIndex core (file handle safety, IndexNode serialization, async rate limiter event-loop fix), LangChain (PERL enum coverage, Qdrant async fix, ToolRuntime regression test), and ChromaDB (HNSW filtered query crash fix, clean shutdown durability below sync threshold)."
-    },
-    {
-      "company": "LetsGrowMore",
-      "position": "Data Science and Web Development Intern",
-      "startDate": "2024-08-01",
-      "endDate": "2024-09-30",
-      "summary": "Built deep learning pipelines for semantic segmentation and crop disease detection; deployed production models integrating Python, Flask, and React.",
-      "highlights": [
-        "Achieved 90.78% pixel accuracy on CamVid dataset using DeepLabv3+",
-        "Developed paddy leaf disease detection with 92.8% classification accuracy",
-        "Deployed full-stack MERN apps with integrated ML models"
+      "name": "Languages",
+      "items": [
+        "Python",
+        "Go",
+        "TypeScript",
+        "SQL",
+        "MATLAB"
       ]
     },
     {
-      "company": "BSNL LTD",
-      "position": "GSM Intern",
-      "startDate": "2024-05-01",
-      "endDate": "2024-06-30",
-      "summary": "Wrote C/C++ diagnostic scripts and used AWS monitoring tools to troubleshoot distributed telecom network infrastructure."
+      "name": "Software engineering",
+      "items": [
+        "FastAPI",
+        "REST & gRPC",
+        "Async systems",
+        "Automated testing",
+        "Distributed systems"
+      ]
+    },
+    {
+      "name": "Machine learning & AI",
+      "items": [
+        "PyTorch",
+        "scikit-learn",
+        "Transformers & PEFT",
+        "LangGraph",
+        "RAG & evaluation"
+      ]
+    },
+    {
+      "name": "Data engineering",
+      "items": [
+        "PySpark",
+        "Parquet",
+        "ETL pipelines",
+        "Point-in-time joins",
+        "Statistical experimentation"
+      ]
+    },
+    {
+      "name": "Databases",
+      "items": [
+        "Redis",
+        "SQLite",
+        "ChromaDB",
+        "Neo4j",
+        "LSM storage"
+      ]
+    },
+    {
+      "name": "Infrastructure & tools",
+      "items": [
+        "Docker",
+        "GitHub Actions",
+        "Prometheus",
+        "Grafana",
+        "MLflow"
+      ]
     }
   ],
-  "achievements": [
+  "work": [
     {
-      "title": "LeetCode",
-      "value": "300+ problems solved",
-      "url": "https://leetcode.com/u/Aditya_1309/"
+      "organization": "Open source",
+      "role": "Engineering contributor",
+      "kind": "Open source",
+      "startDate": "2026-05",
+      "summary": "Contributions to database and AI tooling, with a focus on correctness and regression coverage.",
+      "highlights": [
+        "Improved datanode placement and read-path reliability in GoDFS."
+      ],
+      "technologies": [
+        "Go",
+        "Python",
+        "Regression tests"
+      ],
+      "links": [
+        {
+          "label": "Merged GoDFS contribution",
+          "url": "https://github.com/venkatnikhilm/GoDFS/pull/1"
+        }
+      ]
     },
     {
-      "title": "Goldman Sachs SWE Virtual Experience",
-      "date": "2023",
-      "summary": "Focused on security software development and cryptanalysis."
-    }
-  ],
-  "projects": [
-    {
-      "name": "rag-rbac-chatbot",
-      "description": "Enterprise RAG chatbot with namespace-scoped RBAC, hybrid BM25 + vector  retrieval, JWT auth, PII redaction, and Llama Guard safety — RAGAS  faithfulness 0.91 across 77 automated tests.",
-      "url": "https://github.com/Raditya0902/rag-rbac-chatbot",
-      "topics": [
-        "chromadb",
-        "fastapi",
-        "langchain",
-        "llama-guard",
-        "portfolio",
-        "redis",
-        "streamlit"
+      "organization": "LetsGrowMore",
+      "role": "Data Science & Web Development Intern",
+      "kind": "Internship",
+      "startDate": "2024-08",
+      "endDate": "2024-09",
+      "summary": "Developed image-based ML applications and full-stack web projects.",
+      "highlights": [
+        "Built a plant disease classification model with TensorFlow and Keras.",
+        "Worked on semantic segmentation and integration of ML models into web applications."
       ],
-      "language": "Python",
-      "tech": [
-        "Python"
+      "technologies": [
+        "Python",
+        "TensorFlow",
+        "Keras",
+        "Flask",
+        "React"
       ],
-      "stargazers_count": 0,
-      "metrics": "0 stars"
+      "links": [
+        {
+          "label": "Disease recognition project",
+          "url": "https://github.com/Raditya0902/Disease-Recognition-Model"
+        }
+      ]
     },
     {
-      "name": "diffuse-refactor",
-      "description": "Formal study proving Discrete Latent Diffusion Models (LLaDA 1.5 +  Path-Guided Unmasking) outperform autoregressive models on complex  cross-file code refactoring tasks requiring global structural integrity.",
-      "url": "https://github.com/Raditya0902/diffuse-refactor",
-      "topics": [
-        "diffusion-models",
-        "llada",
-        "portfolio",
-        "pytorch",
-        "transformers"
+      "organization": "BSNL LTD",
+      "role": "GSM Intern",
+      "kind": "Internship",
+      "startDate": "2024-05",
+      "endDate": "2024-06",
+      "summary": "Worked on diagnostics and troubleshooting for telecom network infrastructure.",
+      "highlights": [
+        "Wrote C/C++ diagnostic scripts and used monitoring tools to investigate network issues."
       ],
-      "language": "Python",
-      "tech": [
-        "Python"
+      "technologies": [
+        "C/C++",
+        "Network diagnostics"
       ],
-      "stargazers_count": 0,
-      "metrics": "0 stars"
-    },
-    {
-      "name": "sentinelmesh",
-      "description": "Policy-enforced multi-agent orchestration with a custom Go prompt  inspection proxy — blocks prompt injection, PII leakage, and RBAC  violations in real time.",
-      "url": "https://github.com/Raditya0902/sentinelmesh",
-      "topics": [
-        "ai-safety",
-        "chromadb",
-        "docker",
-        "fastapi",
-        "go",
-        "langgraph",
-        "portfolio"
-      ],
-      "language": "Go",
-      "tech": [
-        "Go"
-      ],
-      "stargazers_count": 0,
-      "metrics": "0 stars"
-    },
-    {
-      "name": "multi-agent-production-incident-response-system",
-      "description": "Autonomous 7-agent LangGraph pipeline that diagnoses production incidents,  generates and tests code patches, and opens a GitHub PR in ~90 seconds —  with a human approval gate and self-healing Critic Agent retry loop.",
-      "url": "https://github.com/Raditya0902/multi-agent-production-incident-response-system",
-      "topics": [
-        "chromadb",
-        "fastapi",
-        "github-api",
-        "groq",
-        "langgraph",
-        "portfolio",
-        "streamlit"
-      ],
-      "language": "Python",
-      "tech": [
-        "Python"
-      ],
-      "stargazers_count": 0,
-      "metrics": "0 stars"
-    },
-    {
-      "name": "clinic-voice-agent",
-      "description": "Real-time phone voice agent for clinic appointment booking — raw  Twilio Media Streams with a full STT → LangGraph → TTS pipeline,  no hosted voice platform.",
-      "url": "https://github.com/Raditya0902/clinic-voice-agent",
-      "topics": [
-        "deepgram",
-        "elevenlabs",
-        "fastapi",
-        "langraph",
-        "portfolio",
-        "twilio"
-      ],
-      "language": "Python",
-      "tech": [
-        "Python"
-      ],
-      "stargazers_count": 0,
-      "metrics": "0 stars"
+      "links": []
     }
   ]
 }

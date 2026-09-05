@@ -1,0 +1,24 @@
+{
+  "repo": "Raditya0902/clinic-voice-agent",
+  "slug": "clinic-voice-agent",
+  "title": "A voice agent from the media stream up",
+  "categories": [
+    "AI Engineering",
+    "Software Engineering"
+  ],
+  "summary": "Phone-based appointment workflows through Twilio, streaming transcription, agent routing, and speech synthesis.",
+  "technologies": [
+    "Twilio",
+    "FastAPI",
+    "LangGraph"
+  ],
+  "signal": "Real-time audio and stateful booking.",
+  "decision": "Use explicit verification and slot-locking in appointment workflows.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/clinic-voice-agent/blob/HEAD/README.md"
+    }
+  ]
+}

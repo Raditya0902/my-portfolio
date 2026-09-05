@@ -1,0 +1,24 @@
+{
+  "repo": "Raditya0902/Real-Time-Graph-Analytics-Pipeline",
+  "slug": "graph-analytics",
+  "title": "Taxi trips as a graph",
+  "categories": [
+    "Data Science",
+    "Software Engineering"
+  ],
+  "summary": "An educational ETL pipeline that models NYC taxi trips in Neo4j and explores locations with PageRank and BFS.",
+  "technologies": [
+    "Python",
+    "Neo4j",
+    "Docker"
+  ],
+  "signal": "From Parquet data to graph queries.",
+  "decision": "Model locations as nodes and trips as directed relationships.",
+  "kind": "Independent project",
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/Real-Time-Graph-Analytics-Pipeline/blob/HEAD/README.md"
+    }
+  ]
+}

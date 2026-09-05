@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+<rect width="1200" height="630" fill="#111111"/>
+<g font-family="monospace" fill="#eeeeee">
+<text x="72" y="106" font-size="42">ar<tspan fill="#b0dbad">.</tspan></text>
+<text x="72" y="249" font-size="58" letter-spacing="-3">Aditya Rallapalli</text>
+<text x="72" y="327" font-size="34" fill="#b0dbad">Software. Data. Machine learning.</text>
+<text x="72" y="399" font-size="23" fill="#aaaaaa">Systems, pipelines, and evaluated AI applications.</text>
+<path d="M72 485H1128" stroke="#444444"/>
+<text x="72" y="541" font-size="20" fill="#aaaaaa">MS Data Science · Arizona State University</text>
+<text x="1038" y="541" font-size="20" fill="#b0dbad">WORK ↗</text>
+</g></svg>

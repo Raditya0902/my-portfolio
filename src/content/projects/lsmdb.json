@@ -1,0 +1,68 @@
+{
+  "repo": "Raditya0902/lsmdb",
+  "slug": "lsmdb",
+  "title": "A database, from storage to consensus",
+  "categories": [
+    "Software Engineering"
+  ],
+  "summary": "A Go key-value database that connects an embedded LSM storage engine to a Raft-replicated cluster.",
+  "technologies": [
+    "Go",
+    "Raft",
+    "gRPC",
+    "Docker"
+  ],
+  "signal": "Quorum writes. Recoverable state.",
+  "decision": "Make the durability boundary explicit: the embedded WAL and replicated Raft log serve different modes.",
+  "kind": "Independent project",
+  "featuredOrder": 1,
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/lsmdb/blob/HEAD/README.md"
+    },
+    {
+      "label": "Raft correctness tests",
+      "url": "https://github.com/Raditya0902/lsmdb/blob/HEAD/internal/raft/node_test.go"
+    }
+  ],
+  "study": {
+    "problem": "What does a database need to keep a write correct when processes crash, leaders change, or a follower falls behind?",
+    "built": "Built an embedded LSM engine with a write-ahead log, immutable SSTables, Bloom filters, range scans, and compaction. A separate replica mode uses that engine as the state machine for a three-node Raft cluster.",
+    "flow": [
+      "gRPC client",
+      "Raft quorum",
+      "Committed log",
+      "LSM state"
+    ],
+    "architecture": "The replicated path persists and orders commands through Raft before applying them to the LSM engine. Snapshots bound the retained log and help lagging followers recover. The embedded mode retains its own WAL-based recovery path.",
+    "decisions": [
+      {
+        "title": "One ordering authority",
+        "body": "Replica mode uses the Raft log index as the LSM sequence number. This keeps replicated ordering and recovery under one authority."
+      },
+      {
+        "title": "Correctness through failure",
+        "body": "The test suite exercises majority commit, conflicting logs, stale leaders, quorum loss, and snapshot recovery. Reads confirm a current-term quorum before serving linearizable results."
+      },
+      {
+        "title": "Expose the bottleneck",
+        "body": "The documented local benchmark loses throughput with four clients. Per-update durable syncs and a single Raft event loop expose a clear opportunity for group commit."
+      }
+    ],
+    "results": [
+      {
+        "label": "Single-client median",
+        "value": "89.6 ops/s",
+        "context": "Five local runs; 1,000 writes of 128 bytes per run on Apple M4, 16 GiB RAM, loopback gRPC. Reported in the project README."
+      },
+      {
+        "label": "Leader failover median",
+        "value": "296 ms",
+        "context": "Same single-client profile; time until a write succeeds after leader termination. This is a local development measurement."
+      }
+    ],
+    "limitations": "The local results are not production capacity. Four-client throughput fell to 28.6 ops/s in the reported runs. Embedded and replica durability guarantees differ; the project documentation describes both.",
+    "lesson": "A useful database benchmark explains its durability settings and failure behavior alongside throughput."
+  }
+}

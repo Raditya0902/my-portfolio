@@ -1,0 +1,73 @@
+{
+  "repo": "Raditya0902/shopsphere-ds-portfolio",
+  "slug": "shopsphere",
+  "title": "From experiments to monitored models",
+  "categories": [
+    "Data Science",
+    "ML Engineering"
+  ],
+  "summary": "Three connected studies in causal inference, inventory forecasting, and churn prediction, built on one synthetic e-commerce dataset.",
+  "technologies": [
+    "Python",
+    "scikit-learn",
+    "MLflow",
+    "FastAPI"
+  ],
+  "signal": "Three studies. One synthetic dataset.",
+  "decision": "Evaluate against meaningful baselines and distinguish a statistically significant result from a promising direction.",
+  "kind": "Synthetic-data case studies",
+  "featuredOrder": 2,
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/shopsphere-ds-portfolio/blob/HEAD/README.md"
+    },
+    {
+      "label": "Experiment results",
+      "url": "https://github.com/Raditya0902/shopsphere-ds-portfolio/blob/HEAD/experimentiq/reports/analysis_results.json"
+    },
+    {
+      "label": "Model and drift results",
+      "url": "https://github.com/Raditya0902/shopsphere-ds-portfolio/blob/HEAD/modelguard/reports/analysis_results.json"
+    }
+  ],
+  "study": {
+    "problem": "How can a data scientist decide whether a product change works, forecast inventory needs, and keep a churn model useful over time?",
+    "built": "Built ExperimentIQ for treatment-effect analysis, ForecastIQ for forecast-driven inventory simulation, and ModelGuard for churn prediction, model registration, API serving, and drift monitoring. All three use a shared synthetic dataset for a fictional company.",
+    "flow": [
+      "Synthetic data",
+      "Analysis & features",
+      "Evaluation",
+      "Decisions & serving"
+    ],
+    "architecture": "A shared deterministic data generator supplies the studies. ExperimentIQ checks assignment and leakage before estimating effects. ForecastIQ compares forecasting models and inventory policies. ModelGuard uses historical customer snapshots, an MLflow registry, and a FastAPI prediction endpoint.",
+    "decisions": [
+      {
+        "title": "Audit before interpreting",
+        "body": "ExperimentIQ checks sample-ratio mismatch and device-switching leakage before analyzing revenue and conversion. CUPED uses a pre-period revenue covariate."
+      },
+      {
+        "title": "Separate signal from certainty",
+        "body": "Conversion increased by 6.9% relative in the synthetic experiment (p=0.036). The revenue change was not statistically significant (p=0.373). They support different conclusions."
+      },
+      {
+        "title": "Monitor more than drift",
+        "body": "ModelGuard compares a classifier with a recency baseline on a later time window. It tracks feature and prediction drift alongside observed predictive performance."
+      }
+    ],
+    "results": [
+      {
+        "label": "Out-of-time model AUC",
+        "value": "0.740",
+        "context": "12,330 synthetic customer snapshots in the current-period evaluation; naive recency baseline AUC 0.565."
+      },
+      {
+        "label": "Relative conversion lift",
+        "value": "+6.9%",
+        "context": "10,000 synthetic customers; p=0.036. This is a simulated experiment, not revenue or impact at an employer."
+      }
+    ],
+    "limitations": "ShopSphere is fictional and all business outcomes are simulated. Results depend on the data generator, baseline choices, and evaluation windows. They demonstrate analytical methods rather than customer impact.",
+    "lesson": "The recommendation should follow the evidence, including uncertainty and cases where a simpler baseline is competitive."
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "repo": "Raditya0902/peft-reasoning-comparison",
+  "slug": "peft-comparison",
+  "title": "When fine-tuning does not win",
+  "categories": [
+    "ML Engineering",
+    "Data Science"
+  ],
+  "summary": "A controlled comparison of LoRA, DoRA, and IA3 against zero-shot and few-shot math-reasoning baselines.",
+  "technologies": [
+    "PyTorch",
+    "PEFT",
+    "Transformers",
+    "GSM8K"
+  ],
+  "signal": "The baseline beat every adapter.",
+  "decision": "Keep the model, data budget, and evaluation consistent, and publish negative results.",
+  "kind": "ML experiment",
+  "featuredOrder": 5,
+  "sources": [
+    {
+      "label": "Project documentation",
+      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/README.md"
+    },
+    {
+      "label": "Recorded evaluation metrics",
+      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/results/metrics/baseline_summary.json"
+    },
+    {
+      "label": "Comparison report",
+      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/report/peft_comparison_report.md"
+    }
+  ],
+  "study": {
+    "problem": "Does parameter-efficient fine-tuning improve multi-step math reasoning when training data and compute are constrained?",
+    "built": "Built a training and evaluation harness for LoRA, DoRA, and IA3, with answer extraction, per-category reporting, saved predictions, and zero-shot/five-shot baselines.",
+    "flow": [
+      "GSM8K",
+      "Shared training budget",
+      "Adapters & baselines",
+      "Held-out evaluation"
+    ],
+    "architecture": "The adapter runs use Llama-3.2-3B-Instruct, 6,000 examples, two epochs, seed 42, and a single V100 GPU. Evaluation records accuracy, extraction failures, latency, and output length. A ten-epoch IA3 follow-up probes longer training.",
+    "decisions": [
+      {
+        "title": "Keep the baseline visible",
+        "body": "All three adapters underperformed the zero-shot model. IA3 is the best adapter in the recorded comparison, but not the best overall method."
+      },
+      {
+        "title": "Inspect more than accuracy",
+        "body": "Track answer extraction failures and generation length alongside correctness to distinguish task failure from output-format behavior."
+      },
+      {
+        "title": "Test the longer-training hypothesis",
+        "body": "IA3 accuracy fell from 0.6975 at two epochs to 0.6262 at ten. More epochs did not repair the gap under these conditions."
+      }
+    ],
+    "results": [
+      {
+        "label": "Zero-shot accuracy",
+        "value": "75.59%",
+        "context": "Recorded GSM8K test evaluation, Llama-3.2-3B-Instruct, seed 42."
+      },
+      {
+        "label": "Best adapter: IA3",
+        "value": "69.75%",
+        "context": "6,000 training examples and two epochs; below the zero-shot baseline. LoRA: 63.99%; DoRA: 63.38%."
+      }
+    ],
+    "limitations": "This is one model, dataset, seed, and constrained training recipe. The experiment does not establish a universal ranking of adapter methods. Identical hyperparameters are a controlled comparison, not per-method tuning.",
+    "lesson": "A strong experiment can conclude that the simplest method is best for the tested budget."
+  }
+}

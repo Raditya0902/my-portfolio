@@ -1,39 +1,43 @@
-name: Update Systems Status
-
+name: Refresh portfolio activity
 on:
   schedule:
-    - cron: '0 0 * * 0' # Weekly on Sunday
-  workflow_dispatch: # Allow manual trigger
-
+    - cron: '0 0 * * 0'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: portfolio-refresh
+  cancel-in-progress: false
 jobs:
-  update-status:
+  refresh:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
-          
-      - name: Install dependencies
-        run: npm install
-        
-      - name: Generate AI Summary
+          node-version: '22.12.0'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Refresh GitHub snapshot
+        run: npm run refresh
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: node scripts/summarize-commits.mjs
-        
-      - name: Commit and push changes
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm run check
+      - name: Commit snapshot
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add src/content/status/summary.json
-          git commit -m "docs: update systems status [skip ci]" || echo "No changes to commit"
-          git push
-        
-      - name: Trigger Vercel Redeploy
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "github-actions[bot]"
+          git add src/content/status/github-data.json
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: refresh portfolio activity [skip ci]"
+            git push
+          fi
+      - name: Redeploy existing Vercel site
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK_URL }}
         if: success()
         run: |
-          curl -X POST "${{ secrets.VERCEL_DEPLOY_HOOK_URL }}"
+          if [ -n "$DEPLOY_HOOK" ]; then
+            curl --fail --silent --show-error --output /dev/null --request POST "$DEPLOY_HOOK"
+          fi
