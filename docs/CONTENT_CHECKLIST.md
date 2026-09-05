@@ -3,7 +3,7 @@
 ## Information still needed from Aditya
 
 - [ ] Add the current resume PDF or a stable HTTPS link. `basics.resumeUrl` is intentionally absent.
-- [ ] Confirm the permanent production domain. The previous `basics.url` remains the canonical origin; the GitHub repository homepage lists a different Vercel URL.
+- [x] Confirm the permanent production domain: `https://adityarallapalli.com/`. This is the canonical origin used by Astro configuration, page metadata, sitemap, and robots.txt.
 - [ ] Confirm current GPA values, degree dates, internship dates, and preferred availability wording before publication. Existing education and dates were retained.
 - [ ] Supply links for the previously listed LlamaIndex, LangChain, and ChromaDB contributions. The public merged-PR search during this review returned a GoDFS contribution, which is linked. Unverified specific merged claims are omitted, not treated as disproved.
 - [ ] Confirm team size and personal ownership for each project. Do not imply sole authorship where it has not been established.

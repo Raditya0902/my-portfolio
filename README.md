@@ -34,7 +34,7 @@ Numerical results must include their measurement conditions and a source. Report
 
 To enable the resume CTA, add `basics.resumeUrl` with a real HTTPS URL or local PDF path such as `/resume.pdf`, and place the PDF in `public`. Until then, the link is absent. Only add `demoUrl` after checking that it is a public, working demo.
 
-The production origin comes from `basics.url`, used by Astro configuration, canonical tags, social metadata, sitemap, and robots. Update that single value when confirming a permanent domain. Restart the development server after changing the origin or upgrading dependencies.
+The canonical production origin is [`https://adityarallapalli.com/`](https://adityarallapalli.com/). It comes from `basics.url` and is used by Astro configuration, canonical tags, social metadata, sitemap, and robots. Restart the development server after changing the origin or upgrading dependencies.
 
 ## Refresh workflow
 
