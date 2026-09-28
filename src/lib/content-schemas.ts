@@ -48,7 +48,7 @@ export const portfolioSchema = z.object({
   about: z.array(text),
   education: z.array(z.object({ institution: text, area: text, score: text, startDate: z.iso.date(), endDate: z.iso.date(), courses: z.array(text) })),
   skills: z.array(z.object({ name: text, items: z.array(text).min(1) })),
-  work: z.array(z.object({ organization: text, role: text, kind: text, startDate: month, endDate: month.optional(), summary: text, highlights: z.array(text), technologies: z.array(text), links: z.array(link) })),
+  work: z.array(z.object({ organization: text, role: text, kind: text, startDate: month, endDate: month.optional(), summary: text, contributions: z.array(z.object({ project: text, summary: text, url: webUrl })).optional(), highlights: z.array(text), technologies: z.array(text), links: z.array(link) })),
 });
 export const repositorySchema = z.object({
   repo: text, url: webUrl, topics: z.array(text).default([]),

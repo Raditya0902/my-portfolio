@@ -32,7 +32,15 @@ const recent = [...status.recentActivity].filter((commit) => !/\/(my-portfolio|r
     <SectionHeading number="03" title="Experience" id="experience-heading">Work beyond the repository.</SectionHeading>
     <div class="experience-list">{work.map((job) => <article class="experience-entry">
       <div class="experience-period"><span class="eyebrow">{job.kind}</span><p><time datetime={job.startDate}>{formatMonth(job.startDate)}</time> – {job.endDate ? <time datetime={job.endDate}>{formatMonth(job.endDate)}</time> : 'Present'}</p></div>
-      <div><h3>{job.role}</h3><p class="organization">{job.organization}</p><p>{job.summary}</p><ul class="bullet-list">{job.highlights.map((highlight) => <li>{highlight}</li>)}</ul><ul class="tags" aria-label="Technologies">{job.technologies.map((tech) => <li>{tech}</li>)}</ul><div class="entry-links">{job.links.map((link) => <a class="text-link" href={link.url}>{link.label} <span aria-hidden="true">↗</span></a>)}</div></div>
+      <div>
+        <h3>{job.role}</h3><p class="organization">{job.organization}</p><p>{job.summary}</p>
+        {job.contributions?.length ? <ul class="contribution-list">{job.contributions.map((contribution) => <li>
+          <a class="contribution-link" href={contribution.url} aria-label={`View merged ${contribution.project} pull request`}><span>{contribution.project}</span><span aria-hidden="true">↗</span></a>
+          <p>{contribution.summary}</p>
+        </li>)}</ul> : <ul class="bullet-list">{job.highlights.map((highlight) => <li>{highlight}</li>)}</ul>}
+        <ul class="tags" aria-label="Technologies">{job.technologies.map((tech) => <li>{tech}</li>)}</ul>
+        {job.links.length > 0 && <div class="entry-links">{job.links.map((link) => <a class="text-link" href={link.url}>{link.label} <span aria-hidden="true">↗</span></a>)}</div>}
+      </div>
     </article>)}</div>
   </section>
 

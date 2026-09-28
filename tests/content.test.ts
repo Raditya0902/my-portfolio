@@ -107,11 +107,14 @@ test('network, API, malformed data and commit failures preserve snapshot and aut
       assert.equal(await readFile(authorPath, 'utf8'), authored);
     }
     await refresh({ projectRoot, fetchImpl: async (url: string) => Response.json(url.includes('/pulls/') ? {
-      html_url: 'https://github.com/promptfoo/promptfoo/pull/10659', title: 'Cover Responses formats',
-      merged_at: now, user: { login: 'Raditya0902' },
+      html_url: url.includes('/GoDFS/') ? 'https://github.com/venkatnikhilm/GoDFS/pull/1' : 'https://github.com/promptfoo/promptfoo/pull/10659',
+      title: 'Merged contribution', merged_at: url.includes('/GoDFS/') ? '2026-03-25T03:55:49Z' : now,
+      user: { login: 'Raditya0902' },
     } : [repo]), now: () => now });
     assert.equal(await readFile(authorPath, 'utf8'), authored);
-    assert.equal(JSON.parse(await readFile(snapshotPath, 'utf8')).lastUpdate, now);
+    const refreshed = JSON.parse(await readFile(snapshotPath, 'utf8'));
+    assert.equal(refreshed.lastUpdate, now);
+    assert.deepEqual(refreshed.recentActivity.map((item: { kind: string; repo: string }) => [item.kind, item.repo]), [['pull_request', 'promptfoo/promptfoo'], ['pull_request', 'venkatnikhilm/GoDFS']]);
     assert.deepEqual(await readdir(join(projectRoot, 'src/content/status')), ['github-data.json']);
   } finally { await rm(projectRoot, { recursive: true, force: true }); }
 });

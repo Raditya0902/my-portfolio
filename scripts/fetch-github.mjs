@@ -75,7 +75,7 @@ export async function refresh({ projectRoot = root, fetchImpl = fetch, token = p
   const names = (await readdir(directory)).filter((name) => name.endsWith('.json')).sort();
   const catalog = await Promise.all(names.map(async (name) => JSON.parse(await readFile(join(directory, name), 'utf8'))));
   const profile = portfolioSchema.parse(JSON.parse(await readFile(join(projectRoot, 'src/content/portfolio/main.json'), 'utf8')));
-  const contributionUrls = profile.work.filter((job) => job.kind === 'Open source').flatMap((job) => job.links.map((link) => link.url));
+  const contributionUrls = profile.work.filter((job) => job.kind === 'Open source').flatMap((job) => (job.contributions ?? []).map((contribution) => contribution.url));
   const githubUsername = profile.basics.profiles.find((account) => account.network === 'GitHub')?.username ?? '';
   const snapshot = await fetchSnapshot(catalog, { fetchImpl, token, now, contributionUrls, githubUsername });
   const destination = join(projectRoot, 'src/content/status/github-data.json');

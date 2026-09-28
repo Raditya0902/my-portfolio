@@ -123,25 +123,25 @@
       "kind": "Open source",
       "startDate": "2026-05",
       "summary": "Contributions to database and AI tooling, with a focus on correctness and regression coverage.",
-      "highlights": [
-        "Improved datanode placement and read-path reliability in GoDFS.",
-        "Added regression tests for OpenAI Responses function-call formats in promptfoo's tool-call F1 assertion."
+      "contributions": [
+        {
+          "project": "GoDFS",
+          "summary": "Improved datanode placement and read-path reliability.",
+          "url": "https://github.com/venkatnikhilm/GoDFS/pull/1"
+        },
+        {
+          "project": "promptfoo",
+          "summary": "Added regression tests for OpenAI Responses function-call formats in the tool-call F1 assertion.",
+          "url": "https://github.com/promptfoo/promptfoo/pull/10659"
+        }
       ],
+      "highlights": [],
       "technologies": [
         "Go",
         "TypeScript",
         "Regression tests"
       ],
-      "links": [
-        {
-          "label": "Merged GoDFS contribution",
-          "url": "https://github.com/venkatnikhilm/GoDFS/pull/1"
-        },
-        {
-          "label": "Merged promptfoo contribution",
-          "url": "https://github.com/promptfoo/promptfoo/pull/10659"
-        }
-      ]
+      "links": []
     },
     {
       "organization": "LetsGrowMore",
