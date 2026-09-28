@@ -21,7 +21,7 @@ Use the local URL printed by the development server. Review at mobile, tablet, a
 
 - `src/content/portfolio/main.json`: profile, introduction, experience, education, and demonstrated skills.
 - `src/content/projects/*.json`: the authoritative local publication catalog. Each file owns a repository identity, stable slug, categories, editorial copy, evidence links, and optional case study.
-- `src/content/status/github-data.json`: generated metadata and recent commits. Never edit this file to change project copy.
+- `src/content/status/github-data.json`: generated metadata and recent project commits or merged open source pull requests. Never edit this file to change project copy.
 - `src/content.config.ts`: Astro collections validated through shared schemas in `src/lib/content-schemas.ts`. These same schemas run in offline tests and refresh validation.
 
 A `featuredOrder` requires a `study`. Repository identities, slugs, and featured ranks must be unique. The six featured studies are generated at `/projects/[slug]`; additional cards link to their GitHub repositories. Metadata joins by repository identity, never by display title. Missing GitHub metadata does not remove curated projects.
@@ -43,7 +43,7 @@ The canonical production origin is [`https://adityarallapalli.com/`](https://adi
 GITHUB_TOKEN=... npm run refresh
 ```
 
-The explicit refresh reads the local catalog, paginates public repository discovery, and fetches recent commits from up to three recently pushed curated repositories. It validates the full result before atomically replacing the cached snapshot. Network, API, timeout, and validation errors exit nonzero and preserve the previous cache. It never writes the profile or project catalog. A missing public repository simply has no generated metadata.
+The explicit refresh reads the local catalog, paginates public repository discovery, and fetches recent commits from up to three recently pushed curated repositories. It also checks pull requests linked in the Open source experience entry and includes those merged by the profile's GitHub account. The activity feed sorts both by commit or merge date. It validates the full result before atomically replacing the cached snapshot. Network, API, timeout, and validation errors exit nonzero and preserve the previous cache. It never writes the profile or project catalog. A missing public repository simply has no generated metadata.
 
 The weekly GitHub Action uses Node 22.12, `npm ci`, offline tests, refresh, and type checks. It commits only the snapshot. An existing `VERCEL_DEPLOY_HOOK_URL` secret can trigger the existing Vercel deployment after success; no new hosting service is needed. If Vercel already deploys snapshot commits automatically, omit the hook to avoid duplicate builds. `GITHUB_TOKEN` is supplied by GitHub Actions. Gemini and its old competing editorial-rewrite scripts are no longer used.
 

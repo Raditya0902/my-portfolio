@@ -51,7 +51,7 @@ const recent = [...status.recentActivity].filter((commit) => !/\/(my-portfolio|r
   <section class="shell section activity-section" aria-labelledby="activity-heading">
     <SectionHeading number="07" title="Recent activity" id="activity-heading">From the workbench.</SectionHeading>
     <p class="activity-date">{status.lastUpdate ? <>GitHub snapshot updated <time datetime={status.lastUpdate}>{formatDay(status.lastUpdate)}</time>. Refreshed weekly.</> : 'GitHub activity is not available yet.'}</p>
-    {recent.length ? <ul class="activity-list">{recent.map((commit) => <li><a href={commit.url}><span class="commit-repo">{commit.repo.split('/')[1]}</span><span class="commit-message">{commit.message.split('\n')[0]}</span><time datetime={commit.timestamp}>{formatDay(commit.timestamp)}</time><span aria-hidden="true">↗</span></a></li>)}</ul> : <p class="muted">Browse my <a href="https://github.com/Raditya0902">GitHub profile</a> for the latest work.</p>}
+    {recent.length ? <ul class="activity-list">{recent.map((commit) => <li><a href={commit.url}><span class="commit-repo">{commit.repo.split('/')[1]}</span><span class="commit-message">{commit.kind === 'pull_request' ? 'Merged PR: ' : ''}{commit.message.split('\n')[0]}</span><time datetime={commit.timestamp}>{formatDay(commit.timestamp)}</time><span aria-hidden="true">↗</span></a></li>)}</ul> : <p class="muted">Browse my <a href="https://github.com/Raditya0902">GitHub profile</a> for the latest work.</p>}
   </section>
   <Contact basics={basics} />
 </Layout>

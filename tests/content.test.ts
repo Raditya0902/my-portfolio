@@ -62,6 +62,25 @@ test('refresh sorts commits, drops missing authors, and strips discovery tags', 
   assert.deepEqual(result.repositories[0].topics, ['go']);
   assert.deepEqual(result.recentActivity.map((commit: { message: string }) => commit.message), ['Latest', 'First']);
 });
+test('merged, authored open source PRs appear by merge date alongside project commits', async () => {
+  const pullUrl = 'https://github.com/promptfoo/promptfoo/pull/10659';
+  const result = await fetchSnapshot([first], {
+    now: () => now,
+    contributionUrls: [pullUrl, pullUrl],
+    githubUsername: 'Raditya0902',
+    fetchImpl: async (url: string) => Response.json(url.includes('/pulls/') ? {
+      html_url: pullUrl, title: 'Cover Responses tool-call F1 formats', merged_at: now,
+      user: { login: 'Raditya0902' },
+    } : url.includes('/commits?') ? [{
+      html_url: 'https://github.com/example/commit/1',
+      commit: { message: 'Older project commit', author: { date: '2026-08-28T00:00:00Z' } },
+    }] : [{ ...repo, pushed_at: now }]),
+  });
+  assert.deepEqual(result.recentActivity.map((item) => [item.kind, item.repo, item.timestamp]), [
+    ['pull_request', 'promptfoo/promptfoo', now],
+    ['commit', first.repo, '2026-08-28T00:00:00Z'],
+  ]);
+});
 test('network, API, malformed data and commit failures preserve snapshot and authored files', async () => {
   const projectRoot = await mkdtemp(join(tmpdir(), 'portfolio-refresh-'));
   try {
@@ -69,6 +88,9 @@ test('network, API, malformed data and commit failures preserve snapshot and aut
     await mkdir(join(projectRoot, 'src/content/status'), { recursive: true });
     const authorPath = join(projectRoot, 'src/content/projects/lsmdb.json');
     const snapshotPath = join(projectRoot, 'src/content/status/github-data.json');
+    const profilePath = join(projectRoot, 'src/content/portfolio/main.json');
+    await mkdir(join(projectRoot, 'src/content/portfolio'), { recursive: true });
+    await writeFile(profilePath, await readFile(new URL('../src/content/portfolio/main.json', import.meta.url), 'utf8'));
     const authored = JSON.stringify(first);
     const prior = JSON.stringify(empty);
     await writeFile(authorPath, authored);
@@ -84,7 +106,10 @@ test('network, API, malformed data and commit failures preserve snapshot and aut
       assert.equal(await readFile(snapshotPath, 'utf8'), prior);
       assert.equal(await readFile(authorPath, 'utf8'), authored);
     }
-    await refresh({ projectRoot, fetchImpl: async () => Response.json([repo]), now: () => now });
+    await refresh({ projectRoot, fetchImpl: async (url: string) => Response.json(url.includes('/pulls/') ? {
+      html_url: 'https://github.com/promptfoo/promptfoo/pull/10659', title: 'Cover Responses formats',
+      merged_at: now, user: { login: 'Raditya0902' },
+    } : [repo]), now: () => now });
     assert.equal(await readFile(authorPath, 'utf8'), authored);
     assert.equal(JSON.parse(await readFile(snapshotPath, 'utf8')).lastUpdate, now);
     assert.deepEqual(await readdir(join(projectRoot, 'src/content/status')), ['github-data.json']);

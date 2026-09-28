@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-09-27T02:56:53.040Z",
+  "lastUpdate": "2026-09-28T06:31:24.002Z",
   "repositories": [
     {
       "repo": "Raditya0902/lsmdb",
@@ -148,58 +148,67 @@
   ],
   "recentActivity": [
     {
+      "kind": "pull_request",
+      "repo": "promptfoo/promptfoo",
+      "message": "test(assertions): cover Responses tool-call F1 formats",
+      "url": "https://github.com/promptfoo/promptfoo/pull/10659",
+      "timestamp": "2026-09-08T20:43:01Z"
+    },
+    {
+      "kind": "commit",
       "repo": "Raditya0902/lsmdb",
       "message": "Expand v1.0 project documentation",
       "url": "https://github.com/Raditya0902/lsmdb/commit/bd67696c28d50e46ca26d836cf529eb47f8a2e8c",
       "timestamp": "2026-08-28T02:30:40Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/lsmdb",
       "message": "Prepare v1.0.0 release",
       "url": "https://github.com/Raditya0902/lsmdb/commit/f14d5c6cd5458dfed7b7077432e98e086b30b843",
       "timestamp": "2026-08-28T02:14:11Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/lsmdb",
       "message": "Add runtime peer address discovery",
       "url": "https://github.com/Raditya0902/lsmdb/commit/b6c6dfcd5f6724ae04db16d3685f2ee76b5c7dc6",
       "timestamp": "2026-08-28T01:50:09Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/shopsphere-ds-portfolio",
       "message": "docs: fix cost-reduction number presentation; add engineering judgment doc\n\nPresentation-only pass (no analysis logic changed, no pipelines re-run) ahead of putting the\nportfolio on a resume/site:\n\n- Both dashboards (top-level portfolio_dashboard.html and forecastiq's own forecast_dashboard.html)\n  now lead with ForecastIQ's fair-baseline cost-reduction number (78%) as the headline stat, with\n  the weak all-time-average baseline (89.8%) demoted to second position and explicitly labeled\n  \"weak baseline, inflated\" rather than appearing unqualified alongside it. Matched precision\n  (one decimal place) so both dashboards report the same 89.8% for that stat.\n- Added docs/engineering_judgment.md: nine chronological items (bugs caught, models cross-checked\n  against a dumb baseline on purpose, an overclaim corrected, negative results reported honestly)\n  pulled from the three project READMEs, each closing on a bolded general principle.\n- Linked it prominently from the top-level README, right under the headline results table, and\n  added a \"Bugs caught, baselines corrected\" card to the top of the portfolio dashboard pulling\n  four one-line highlights from the doc.\n\nVerified: zero remaining unqualified \"89.8%\"/\"90%\" occurrences repo-wide, both dashboards rebuild\ncleanly by re-reading their existing analysis_results.json (no re-analysis), full test suite and\nruff still green.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
       "url": "https://github.com/Raditya0902/shopsphere-ds-portfolio/commit/8b73f130cb5019ff96b412b0c9ca2362848ae078",
       "timestamp": "2026-08-21T17:55:16Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/shopsphere-ds-portfolio",
       "message": "chore: repo-wide quality pass — error handling, config discipline, tests, dedup, tooling\n\nFollows a full-repo improvement audit (3 parallel explore passes) turned into a 6-phase plan:\n\n- Fix stale/misleading docs: generate.py's \"skeleton\" docstring, architecture.md's premature\n  Dockerfile claims.\n- Add error handling at I/O boundaries: config validation in shopsphere-data/generate.py,\n  missing-data checks in experimentiq/data.py, a wrapped 500 in modelguard/api.py's predict().\n- Move ~10 hardcoded generator/analysis values into YAML config (orders/events/inventory\n  distributions, forecastiq's naive-baseline trailing window, modelguard's risk-band cutoffs and\n  classification threshold), matching the repo's own \"config via YAML\" rule.\n- Add missing test coverage: shopsphere-data's generate.py orchestrator, shared/'s style and\n  constants modules, uplift.py::build_features, and a real HTTP-layer TestClient suite for the\n  ModelGuard API (including the 503 model-not-loaded path).\n- Extract real, unexploited duplication into shared/: shared/cli.py for the three\n  run_analysis.py scripts' argparse/config-load/write-results boilerplate, and\n  DASHBOARD_BASE_CSS for the three project dashboards' identical stylesheet block.\n- Add tooling: ruff configured (E/F/I, no E501) and the repo made clean, a requirements-lock.txt\n  pinning the exact tested environment, a documented root-level `pytest` command, and\n  forecastiq's blanket warning suppression narrowed to the one thing it was actually hiding.\n\nEvery generator/analysis change was verified value-preserving: regenerated data and all three\nprojects' analysis_results.json/dashboards were diffed against committed versions (byte-identical\nor differing only in expected non-substantive ways — MLflow's model_version bump, one\nfloating-point noise digit, CSS whitespace) before being reverted, so no regenerated artifact is\npart of this commit. Full suite: 116 passed, ruff clean.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
       "url": "https://github.com/Raditya0902/shopsphere-ds-portfolio/commit/b8bae9edabe31cfa1f9a494614c0c2b1b2a60500",
       "timestamp": "2026-08-21T17:33:32Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/shopsphere-ds-portfolio",
       "message": "chore: stop tracking an internal notes file; make README self-contained\n\nRemoved an internal session-continuity file from git tracking (still present\non disk locally, now gitignored) -- it wasn't meant for the public repo\nbrowse view. History isn't rewritten, so it remains recoverable from earlier\ncommits if ever needed; nothing in it was sensitive.\n\nRewrote README.md so it no longer depends on that file for context: each\nproject now gets its real business question, method, and headline result\ndirectly in the README, plus an engineering-approach section. It should now\nread cold, with no other file required.",
       "url": "https://github.com/Raditya0902/shopsphere-ds-portfolio/commit/1995c828ca2bdfdb8e26faa85346e7a38b193fc1",
       "timestamp": "2026-08-04T02:00:48Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/chess-fundamentals-rag-tutor",
       "message": "docs: fix broken dev-instructions link, add demo screenshots\n\nREADME's closing line pointed at a project instructions file that's\nintentionally excluded from the repo -- broken link for anyone viewing\non GitHub. Replaced with a link to the already-tracked\ndev/active/chess-tutor/ directory.\n\nAlso adds a short Demo section with two real screenshots: Manual FEN\nmode (move-checker + FEN-similarity retrieval) and the Game 4\nlow-confidence hedge.",
       "url": "https://github.com/Raditya0902/chess-fundamentals-rag-tutor/commit/2c9f2c0bc2e96c896e8ead91b5741defaab2c423",
       "timestamp": "2026-07-24T08:47:41Z"
     },
     {
+      "kind": "commit",
       "repo": "Raditya0902/chess-fundamentals-rag-tutor",
       "message": "docs: note has_open_review_flags conflates confirmed disputes with unclosed audit samples\n\nengine_verify_mismatch/pgn_lookup_mismatch (something actually found wrong) and\nengine_verify_sample_review (randomly selected for audit, nothing found wrong yet)\nboth set has_open_review_flags=True and trigger identical hedge language today.\nFound while investigating why a clean text-only query about Example 1 (Rook+King\ncheckmate) still produced a hedge -- traced to two genuinely flagged passages\n(Example 59, a real engine-verify mismatch; Example 2, just an unclosed audit\nsample) among the 8 retrieved chunks, not a bug in the hedge mechanism itself.",
       "url": "https://github.com/Raditya0902/chess-fundamentals-rag-tutor/commit/ae3288d69e72b5b08e8ee48e41bbeaf00bc2423b",
       "timestamp": "2026-07-24T08:39:13Z"
-    },
-    {
-      "repo": "Raditya0902/chess-fundamentals-rag-tutor",
-      "message": "feat: multi-modal RAG + LangGraph agentic chess tutor\n\nIngests José Capablanca's public-domain 1921 book *Chess Fundamentals* into an\nenriched knowledge base (prose + vision-extracted FEN + verified PGN per\nexample/game), then serves a 4-agent LangGraph pipeline (position classifier,\ndeterministic hybrid+FEN-similarity retriever, move/plan checker, coach) that\nvisibly hedges on any content the ingestion pipeline couldn't fully verify.\n\n- ingestion/: PDF segmentation, diagram detection, Gemini vision FEN extraction\n  with 3-layer validation, PGN-database move sourcing (Stockfish verification\n  for tactical examples, LLM notation parsing as a last-resort fallback),\n  theme/imbalance tagging, Chroma load\n- retrieval/: hybrid (semantic + BM25 + cross-encoder rerank) + FEN-similarity\n  retrieval, merged and deduped\n- agents/ + graph/: 4-agent LangGraph workflow with conditional routing\n- api/: FastAPI backend (ask, extract-fen, diagrams, review-queue)\n- frontend/: Streamlit chat UI, image-upload HITL flow, review-queue browser\n- eval/: RAGAS-based evaluation harness + FEN-extraction accuracy report +\n  per-question Faithfulness re-scoring tool\n- docs/limitations.md + README.md: honest, numbers-backed account of what's\n  verified, what's flagged, and what's unresolved\n- tests/: 318 tests (2 integration, need real API keys)\n\nSee dev/active/chess-tutor/{plan,context,tasks}.md for the full plan, decision\nlog, and phase-by-phase build history.",
-      "url": "https://github.com/Raditya0902/chess-fundamentals-rag-tutor/commit/7033f0653b9de9f8591a46d164559fe13acec190",
-      "timestamp": "2026-07-24T07:52:43Z"
     }
   ]
 }

@@ -2,7 +2,7 @@ import { readFile, readdir, writeFile, rename, unlink } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { z } from 'zod';
-import { catalogSchema, statusSchema } from '../src/lib/content-schemas.ts';
+import { catalogSchema, portfolioSchema, statusSchema } from '../src/lib/content-schemas.ts';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const apiRepo = z.object({
@@ -14,13 +14,22 @@ const apiCommit = z.object({
   html_url: z.url(),
   commit: z.object({ message: z.string(), author: z.object({ date: z.iso.datetime() }).nullable() }),
 });
+const apiPull = z.object({
+  html_url: z.url(), title: z.string(), merged_at: z.iso.datetime().nullable(),
+  user: z.object({ login: z.string() }),
+});
+
+function pullRequestPath(url) {
+  const match = /^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/([1-9]\d*)\/?$/i.exec(url);
+  return match ? `/repos/${match[1]}/${match[2]}/pulls/${match[3]}` : null;
+}
 
 /**
  * All network reads finish before a snapshot is eligible for publication.
  * @param {unknown} catalogInput
- * @param {{fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>, token?: string, now?: () => string}} options
+ * @param {{fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>, token?: string, now?: () => string, contributionUrls?: string[], githubUsername?: string}} options
  */
-export async function fetchSnapshot(catalogInput, { fetchImpl = fetch, token = process.env.GITHUB_TOKEN, now = () => new Date().toISOString() } = {}) {
+export async function fetchSnapshot(catalogInput, { fetchImpl = fetch, token = process.env.GITHUB_TOKEN, now = () => new Date().toISOString(), contributionUrls = [], githubUsername = '' } = {}) {
   const catalog = catalogSchema.parse(catalogInput);
   const headers = { Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(token ? { Authorization: `Bearer ${token}` } : {}) };
   async function request(path) {
@@ -48,9 +57,16 @@ export async function fetchSnapshot(catalogInput, { fetchImpl = fetch, token = p
   const active = [...selected].filter((repo) => repo.pushed_at).sort((a, b) => b.pushed_at.localeCompare(a.pushed_at)).slice(0, 3);
   const recentActivity = (await Promise.all(active.map(async (repo) => {
     const commits = z.array(apiCommit).parse(await request(`/repos/${repo.full_name}/commits?per_page=3`));
-    return commits.filter((item) => item.commit.author).map((item) => ({ repo: repo.full_name, url: item.html_url, message: item.commit.message, timestamp: item.commit.author.date }));
+    return commits.filter((item) => item.commit.author).map((item) => ({ kind: 'commit', repo: repo.full_name, url: item.html_url, message: item.commit.message, timestamp: item.commit.author.date }));
   }))).flat().sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 9);
-  return statusSchema.parse({ lastUpdate: now(), repositories, recentActivity });
+  const paths = [...new Set(contributionUrls.map(pullRequestPath).filter(Boolean))];
+  const contributions = (await Promise.all(paths.map(async (path) => {
+    const pull = apiPull.parse(await request(path));
+    if (!pull.merged_at || pull.user.login.toLowerCase() !== githubUsername.toLowerCase()) return null;
+    const repo = new URL(pull.html_url).pathname.split('/').slice(1, 3).join('/');
+    return { kind: 'pull_request', repo, url: pull.html_url, message: pull.title, timestamp: pull.merged_at };
+  }))).filter(Boolean);
+  return statusSchema.parse({ lastUpdate: now(), repositories, recentActivity: [...recentActivity, ...contributions].sort((a, b) => b.timestamp.localeCompare(a.timestamp)).slice(0, 9) });
 }
 
 /** @param {{projectRoot?: string, fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>, token?: string, now?: () => string}} options */
@@ -58,7 +74,10 @@ export async function refresh({ projectRoot = root, fetchImpl = fetch, token = p
   const directory = join(projectRoot, 'src/content/projects');
   const names = (await readdir(directory)).filter((name) => name.endsWith('.json')).sort();
   const catalog = await Promise.all(names.map(async (name) => JSON.parse(await readFile(join(directory, name), 'utf8'))));
-  const snapshot = await fetchSnapshot(catalog, { fetchImpl, token, now });
+  const profile = portfolioSchema.parse(JSON.parse(await readFile(join(projectRoot, 'src/content/portfolio/main.json'), 'utf8')));
+  const contributionUrls = profile.work.filter((job) => job.kind === 'Open source').flatMap((job) => job.links.map((link) => link.url));
+  const githubUsername = profile.basics.profiles.find((account) => account.network === 'GitHub')?.username ?? '';
+  const snapshot = await fetchSnapshot(catalog, { fetchImpl, token, now, contributionUrls, githubUsername });
   const destination = join(projectRoot, 'src/content/status/github-data.json');
   const temporary = `${destination}.${process.pid}.tmp`;
   try {
@@ -72,7 +91,7 @@ export async function refresh({ projectRoot = root, fetchImpl = fetch, token = p
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   refresh().then((snapshot) => {
-    console.log(`Refreshed ${snapshot.repositories.length} curated repositories and ${snapshot.recentActivity.length} commits. Editorial content was preserved.`);
+    console.log(`Refreshed ${snapshot.repositories.length} curated repositories and ${snapshot.recentActivity.length} activity items. Editorial content was preserved.`);
   }).catch((error) => {
     console.error(`Refresh failed; previous snapshot retained. ${error.message}`);
     process.exitCode = 1;

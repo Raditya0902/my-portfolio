@@ -55,7 +55,7 @@ export const repositorySchema = z.object({
   language: z.string().nullable().optional(), stars: z.number().int().nonnegative().default(0),
   updatedAt: z.iso.datetime(),
 });
-export const commitSchema = z.object({ repo: text, message: text, url: webUrl, timestamp: z.iso.datetime() });
+export const commitSchema = z.object({ kind: z.enum(['commit', 'pull_request']).default('commit'), repo: text, message: text, url: webUrl, timestamp: z.iso.datetime() });
 export const statusSchema = z.object({
   lastUpdate: z.iso.datetime().nullable(),
   repositories: z.array(repositorySchema), recentActivity: z.array(commitSchema),
