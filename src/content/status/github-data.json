@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-10-04T03:41:46.549Z",
+  "lastUpdate": "2026-10-11T03:16:48.694Z",
   "repositories": [
     {
       "repo": "Raditya0902/lsmdb",
@@ -7,7 +7,7 @@
       "topics": [],
       "language": "Go",
       "stars": 0,
-      "updatedAt": "2026-08-28T02:30:57Z"
+      "updatedAt": "2026-10-07T01:23:41Z"
     },
     {
       "repo": "Raditya0902/shopsphere-ds-portfolio",
@@ -148,32 +148,32 @@
   ],
   "recentActivity": [
     {
+      "kind": "commit",
+      "repo": "Raditya0902/lsmdb",
+      "message": "Merge pull request #9 from Raditya0902/docs/design-d017-d022\n\ndocs: DESIGN.md matches the engine after D016-D022",
+      "url": "https://github.com/Raditya0902/lsmdb/commit/7c2d67c9b28d84fcd252ed580133481c7ee50320",
+      "timestamp": "2026-10-07T01:23:36Z"
+    },
+    {
+      "kind": "commit",
+      "repo": "Raditya0902/lsmdb",
+      "message": "docs: check line references and skip non-path tokens in check_paths.py\n\nRunning --file on DESIGN.md and RUNBOOK.md reported three false misses:\n- a path with a line reference (internal/raftnode/runtime.go:740-742) is now\n  checked for the file and its line count;\n- the metric name appends/entry, the unit ops/s and the per-run directory\n  runs/ under each -work directory are listed as non-paths, with reasons.\n\nTested on a fixture: an existing range passes; a range past the end of the\nfile and a missing file each exit 1.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/Raditya0902/lsmdb/commit/6a19c9c74ffa4ea3bb225da110875425c4ee0f7c",
+      "timestamp": "2026-10-07T00:47:49Z"
+    },
+    {
+      "kind": "commit",
+      "repo": "Raditya0902/lsmdb",
+      "message": "docs: let check_paths.py check any Markdown file with --file\n\n- --file PATH, repeatable, defaults to README.md.\n- Links resolve from the checked file's directory, and a bare #anchor refers\n  to that file; code spans, code blocks and go run targets stay\n  repository-root relative.\n- Absolute paths and endpoints in code spans are skipped as non-repository\n  paths, and a go run target ends at its code span, so trailing punctuation no\n  longer reports a false miss.\n\nTested on fixtures: a dead link and a bad anchor exit 1, a dead go run target\nexits 1, a clean file exits 0.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/Raditya0902/lsmdb/commit/3ae4721f693006700317d28f7b5891fa84240069",
+      "timestamp": "2026-10-07T00:46:52Z"
+    },
+    {
       "kind": "pull_request",
       "repo": "promptfoo/promptfoo",
       "message": "test(assertions): cover Responses tool-call F1 formats",
       "url": "https://github.com/promptfoo/promptfoo/pull/10659",
       "timestamp": "2026-09-08T20:43:01Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/lsmdb",
-      "message": "Expand v1.0 project documentation",
-      "url": "https://github.com/Raditya0902/lsmdb/commit/bd67696c28d50e46ca26d836cf529eb47f8a2e8c",
-      "timestamp": "2026-08-28T02:30:40Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/lsmdb",
-      "message": "Prepare v1.0.0 release",
-      "url": "https://github.com/Raditya0902/lsmdb/commit/f14d5c6cd5458dfed7b7077432e98e086b30b843",
-      "timestamp": "2026-08-28T02:14:11Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/lsmdb",
-      "message": "Add runtime peer address discovery",
-      "url": "https://github.com/Raditya0902/lsmdb/commit/b6c6dfcd5f6724ae04db16d3685f2ee76b5c7dc6",
-      "timestamp": "2026-08-28T01:50:09Z"
     },
     {
       "kind": "commit",
