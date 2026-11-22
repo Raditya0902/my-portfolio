@@ -2,7 +2,7 @@
 
 ## Information still needed from Aditya
 
-- [ ] Add the current resume PDF or a stable HTTPS link. `basics.resumeUrl` is intentionally absent.
+- [x] Resume: decided not to publish one. Aditya tailors the resume per job description, and a generic copy on the site would go stale. `basics.resumeUrl` stays absent; the hero link renders only if it is set.
 - [x] Confirm the permanent production domain: `https://adityarallapalli.com/`. This is the canonical origin used by Astro configuration, page metadata, sitemap, and robots.txt.
 - [ ] Confirm current GPA values, degree dates, internship dates, and preferred availability wording before publication. Existing education and dates were retained.
 - [ ] Supply links for the previously listed LlamaIndex, LangChain, and ChromaDB contributions. The public merged-PR search during this review returned a GoDFS contribution, which is linked. Unverified specific merged claims are omitted, not treated as disproved.
@@ -28,7 +28,7 @@ The directory’s additional project summaries are grounded in their public READ
 
 ## Strongest next additions
 
-1. A resume aligned with the site and linked evidence for open-source contributions.
+1. Linked evidence for open-source contributions.
 2. Short, accessible demo recordings for the database failover, inference dashboard, and AI applications.
 3. Clear ownership, dates, and reproducibility instructions for each featured project.
 4. Additional experimental repetitions and confidence intervals where applicable. Keep existing negative results and limitations visible.
