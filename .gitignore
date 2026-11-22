@@ -25,3 +25,5 @@ pnpm-debug.log*
 
 #my context
 # AGENTS.md removed from ignore to track history
+# local browser-automation output
+.playwright-mcp/
