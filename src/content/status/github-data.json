@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-11-22T04:29:05.300Z",
+  "lastUpdate": "2026-11-22T10:05:58.491Z",
   "repositories": [
     {
       "repo": "Raditya0902/lsmdb",
@@ -150,6 +150,13 @@
     {
       "kind": "commit",
       "repo": "Raditya0902/rag-rbac-chatbot",
+      "message": "feat: stop the RAG model inferring links the documents don't state\n\nMulti-hop faithfulness was 0.74: gpt-oss-120b connected facts the documents\nlist separately (e.g. check-ins exist \"to review progress toward probation\nobjectives\"). The prompt now forbids unstated purposes, causes and\nconnections, and applying policy beyond what the context says. When a\nquestion asks for a link the context lacks, the model gives every related\nfact first, then ends with MISSING_LINK_MESSAGE.\n\n50q full run, same model and judge (deepseek-chat):\n  before:  faithfulness 0.8916, relevancy 0.9048 (multi-hop 0.744 / 0.830)\n  now:     faithfulness 0.9490, relevancy 0.8831 (multi-hop 0.912 / 0.773)\nRefusals unchanged at 10/10, 0/40 false refusals.\n\nA stricter variant without the facts-first ordering scored 0.9566 / 0.8556\nbut sometimes opened with the missing-link sentence and skipped stated\nfacts, scoring 0 relevancy on two answers.\n\nMISSING_LINK_MESSAGE must not contain REFUSAL_MESSAGE, since refusal\ndetection is a substring match; a test guards this.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/Raditya0902/rag-rbac-chatbot/commit/1a50ae8b34a285722acd6d3fa073bd229c9d86ba",
+      "timestamp": "2026-11-22T04:57:29Z"
+    },
+    {
+      "kind": "commit",
+      "repo": "Raditya0902/rag-rbac-chatbot",
       "message": "fix: let eval runs survive Groq's daily token cap\n\nA full 50-question run can hit gpt-oss-120b's 200k tokens/day free-tier cap\npartway through. Answers were only cached once all 50 were in, so a stopped\nrun lost everything, and the retry loop only understood \"retry in Xs\" waits,\nso Groq's \"try again in 8m40s\" fell back to blind 60s retries.\n\n- Save each answer to eval_samples_progress.json as it arrives; re-running\n  the same command resumes. The file is tagged with a fingerprint of the\n  RAG prompt and model, so answers from a different setup are discarded\n  rather than mixed in. Deleted once the full cache is written.\n- Parse h/m/s/ms retry waits from the provider's 429 message.\n- README: document resuming; fix test counts (guardrail tests were\n  uncounted).\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
       "url": "https://github.com/Raditya0902/rag-rbac-chatbot/commit/32f48a86056d798a33f3d5dbe041bb623c6a1796",
       "timestamp": "2026-11-21T21:32:19Z"
@@ -159,13 +166,6 @@
       "repo": "Raditya0902/rag-rbac-chatbot",
       "message": "fix: make the Prompt Guard check actually block injections\n\nOn Groq, Llama Prompt Guard 2 replies with the injection probability as\na string (\"0.9996\"), but the check looked for the word \"INJECTION\", so\nit never blocked anything. The tests passed because they mocked an\n\"INJECTION\" reply that the API never sends.\n\nThe check now parses the score and blocks at GUARD_THRESHOLD (default\n0.5). A reply that isn't a score fails open and is logged, like API\nerrors. The default GUARD_MODEL was Llama Guard 3, a different model\nwith a safe/unsafe reply; it is now llama-prompt-guard-2-86m, matching\nwhat the code expects. Tests mock the real replies.\n\nVerified live: an injection that gets past the regex is now blocked,\nand none of the 50 eval questions is flagged.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
       "url": "https://github.com/Raditya0902/rag-rbac-chatbot/commit/9f397dcc66a6e924ebb8d76b7634a47d81e88ded",
-      "timestamp": "2026-11-21T20:33:12Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/rag-rbac-chatbot",
-      "message": "feat: move RAG model to gpt-oss-120b and record a fresh 50-question run\n\nGroq retired its Llama chat models, so llama-3.3-70b-versatile and the\nllama-3.1-8b-instant default judge no longer exist. The RAG model is now\nopenai/gpt-oss-120b and the default Groq judge openai/gpt-oss-20b.\n\nRe-ran all 50 questions with fresh answers (no cache), judged by\ndeepseek-chat: faithfulness 0.8916, answer relevancy 0.9048, refusals\n10/10, false refusals 0/40. Relevancy rose (HR 0.664 -> 0.823) with the\ncomplete-sentence prompt. Faithfulness fell from 0.9639, almost all on\nmulti_hop (0.920 -> 0.744): gpt-oss-120b states links between facts that\nthe documents list separately. The model and prompt changed in the same\nrun, so their effects can't be separated. The README states this.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
-      "url": "https://github.com/Raditya0902/rag-rbac-chatbot/commit/1599a5a7744fd777ec2d63f337f2e3f5980d32e2",
       "timestamp": "2026-11-21T20:33:12Z"
     },
     {
