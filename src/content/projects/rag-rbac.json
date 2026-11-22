@@ -23,51 +23,95 @@
       "url": "https://github.com/Raditya0902/rag-rbac-chatbot/blob/HEAD/README.md"
     },
     {
-      "label": "Append-only evaluation log",
+      "label": "Evaluation history",
       "url": "https://github.com/Raditya0902/rag-rbac-chatbot/blob/HEAD/EVAL_RESULTS.md"
-    },
-    {
-      "label": "Retrieval tests",
-      "url": "https://github.com/Raditya0902/rag-rbac-chatbot/blob/HEAD/tests/test_retrieval.py"
     }
   ],
   "study": {
     "problem": "A shared knowledge assistant must answer useful questions without retrieving documents the current user is not allowed to read.",
-    "built": "Built a RAG application with JWT authentication, Redis token revocation and conversation memory, department-scoped retrieval, BM25/vector search, cross-encoder reranking, and streaming responses.",
+    "built": "Built a RAG application with JWT authentication, Redis token revocation, department-scoped hybrid retrieval (BM25 plus vector search), cross-encoder reranking, streaming responses, and 191 automated tests.",
     "flow": [
       "Authenticated request",
       "Scoped hybrid retrieval",
       "Rerank & generate",
       "Output handling"
     ],
-    "architecture": "Requests pass through authentication, per-user rate limits, and input checks. Retrieval filters accessible namespaces before reranking. Redis stores conversation state and revoked tokens. Output handling includes PII redaction; optional Llama Guard adds another safety check.",
+    "architecture": "Requests pass through per-user rate limits, authentication, and input guardrails that block injection and off-topic queries, with Llama Prompt Guard 2 as an optional second check. Both halves of retrieval are restricted to the user’s departments before reranking. Redis stores conversation state and revoked tokens, and output handling redacts PII.",
     "decisions": [
       {
         "title": "Authorize before generation",
-        "body": "Department access is enforced at retrieval rather than relying on instructions to the model or a hidden UI control."
+        "body": "Department access is enforced in both the BM25 index and the vector query, rather than relying on instructions to the model or a hidden UI control. Chat history is private to each user."
       },
       {
-        "title": "Measure the full question set",
-        "body": "The 25-question evaluation scored 0.9116 faithfulness. The 50-question run scored 0.7423 with a different judge model. Both belong in the results."
+        "title": "Name the tradeoff",
+        "body": "A facts-first prompt stopped the model from stating links the documents don’t make. With the same model and judge, faithfulness rose from 0.8916 to 0.9490 while answer relevancy fell from 0.9048 to 0.8831."
       },
       {
-        "title": "Separate evaluation from tests",
-        "body": "Automated tests cover retrieval, Redis, re-ingestion, and guardrails. They are distinct from the question sets used to evaluate answer quality."
+        "title": "Score refusals separately",
+        "body": "RAGAS scores a correct “I don’t know” as zero, so unanswerable questions are scored by refusal accuracy instead. The README reports how much that choice raises the averages."
       }
     ],
     "results": [
       {
-        "label": "50-question faithfulness",
-        "value": "0.7423",
-        "context": "Full recorded evaluation using llama-3.1-8b-instant for scoring; answer relevancy 0.6495."
+        "label": "Faithfulness",
+        "value": "0.9490",
+        "context": "40 answerable questions from a 50-question set; gpt-oss-120b answers judged by deepseek-chat, single run. Answer relevancy 0.8831."
       },
       {
-        "label": "25-question faithfulness",
-        "value": "0.9116",
-        "context": "Subset evaluated using llama-3.3-70b-versatile; answer relevancy 0.7346. Different samples and judges prevent a direct comparison."
+        "label": "Correct refusals",
+        "value": "10/10",
+        "context": "Questions the documents can’t answer; 0 of 40 answerable questions were wrongly refused."
       }
     ],
-    "limitations": "Model-judged scores depend on the question set and judge. Pattern-based guardrails and optional model checks do not establish comprehensive security or production readiness.",
-    "lesson": "The authorization boundary and evaluation conditions matter more than a single headline score."
+    "limitations": "Each score is a single run with an LLM judge. Earlier entries used other judges, models, or question sets and aren’t comparable. Multi-hop answers remain the weakest. Pattern-based guardrails and optional model checks don’t establish comprehensive security or production readiness.",
+    "lesson": "The authorization boundary and evaluation conditions matter more than a single headline score.",
+    "chart": {
+      "type": "bar",
+      "title": "RAGAS scores by question type",
+      "unit": "",
+      "decimals": 2,
+      "max": 1,
+      "caption": "Answerable questions only, n per type in the label. gpt-oss-120b with the facts-first prompt, judged by deepseek-chat, single run.",
+      "series": [
+        {
+          "name": "Faithfulness",
+          "tone": "green"
+        },
+        {
+          "name": "Answer relevancy",
+          "tone": "blue"
+        }
+      ],
+      "rows": [
+        {
+          "label": "Factual (n=15)",
+          "values": [
+            0.9778,
+            0.9543
+          ]
+        },
+        {
+          "label": "Ambiguous (n=10)",
+          "values": [
+            0.9592,
+            0.8564
+          ]
+        },
+        {
+          "label": "Edge case (n=5)",
+          "values": [
+            0.9167,
+            0.9424
+          ]
+        },
+        {
+          "label": "Multi-hop (n=10)",
+          "values": [
+            0.9117,
+            0.7732
+          ]
+        }
+      ]
+    }
   }
 }

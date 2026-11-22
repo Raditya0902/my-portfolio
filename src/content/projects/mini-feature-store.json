@@ -33,33 +33,33 @@
   ],
   "study": {
     "problem": "A model can look excellent offline if its training features contain information that only became available after a prediction event. How can a feature store prevent that leakage?",
-    "built": "Built a YAML feature registry, offline Parquet storage, online Redis serving, materialization jobs, and an HTTP API for online and historical feature retrieval. A PySpark path supports larger feature-computation workloads.",
+    "built": "Built a YAML feature registry, event-time materialization of hourly driver snapshots into Parquet, online serving of each driver’s latest snapshot from Redis, and an HTTP API for online and historical retrieval. A separate PySpark job demonstrates batch aggregation on larger inputs.",
     "flow": [
       "Feature registry",
       "Materialization",
       "Parquet / Redis",
       "Training / inference"
     ],
-    "architecture": "The registry describes entities, sources, and feature TTLs. Materialization populates storage. Historical retrieval groups feature rows by entity and selects the latest eligible timestamp for each event; online retrieval reads materialized values from Redis.",
+    "architecture": "The registry describes entities, feature views, and TTLs. Materialization turns completed trips into hourly snapshots, keeps the history in Parquet, and publishes each driver’s latest closed snapshot to Redis. Historical retrieval picks, for each event, the newest snapshot at or before the event and within the TTL.",
     "decisions": [
       {
         "title": "Time is part of correctness",
-        "body": "Historical joins reject feature timestamps after the event and rows older than the configured TTL. An event with no eligible feature retains missing features rather than borrowing a future value."
+        "body": "Historical joins reject snapshots after the event and snapshots older than the 24-hour TTL. An event with no eligible snapshot keeps missing features rather than borrowing a future value."
       },
       {
         "title": "Make serving paths explicit",
         "body": "Separate online lookup and historical join endpoints keep low-latency inference retrieval distinct from training-data construction."
       },
       {
-        "title": "Test consistency",
-        "body": "Dedicated tests cover point-in-time joins, registry validation, offline storage, online storage, and consistency between serving paths."
+        "title": "Test against a reference",
+        "body": "38 test cases cover registry validation, Parquet round trips, and join rules. A seeded randomized test compares the batched join with a naive reference on shuffled data, equal timestamps, gaps, and exact TTL boundaries. CI fails if any test is skipped."
       }
     ],
     "results": [
       {
         "label": "Core guarantee",
         "value": "No future rows",
-        "context": "Enforced by explicit timestamp and TTL checks in the historical join implementation; this is an implementation property, not a performance benchmark."
+        "context": "Enforced by explicit timestamp and TTL checks in the historical join and checked against a naive reference implementation; an implementation property, not a performance benchmark."
       },
       {
         "label": "Storage paths",
@@ -67,7 +67,8 @@
         "context": "Parquet for historical retrieval and Redis for online lookup, with a shared registry."
       }
     ],
-    "limitations": "The historical join implementation reads source rows into memory and scans each entity\u2019s rows per event. Spark materialization scale does not establish historical-join latency or online-serving capacity.",
-    "lesson": "Training-serving consistency requires explicit time semantics, not just matching column names."
+    "limitations": "Each historical request still scans the whole Parquet file in batches, so query cost grows with history size. The API is a local development server without authentication. The Spark timing (2.29–2.43 s for 9.55 million rows on an Apple M4) measures batch aggregation, not historical-join latency or online-serving capacity.",
+    "lesson": "Training-serving consistency requires explicit time semantics, not just matching column names.",
+    "figure": "point-in-time"
   }
 }

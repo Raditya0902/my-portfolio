@@ -1,0 +1,13 @@
+---
+interface Props { headers: string[]; rows: string[][] }
+const { headers, rows } = Astro.props;
+---
+<details class="chart-data">
+  <summary>View data table</summary>
+  <div class="table-scroll">
+    <table>
+      <thead><tr>{headers.map((header) => <th scope="col">{header}</th>)}</tr></thead>
+      <tbody>{rows.map(([label, ...cells]) => <tr><th scope="row">{label}</th>{cells.map((cell) => <td>{cell}</td>)}</tr>)}</tbody>
+    </table>
+  </div>
+</details>

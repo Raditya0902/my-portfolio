@@ -6,15 +6,15 @@
     "ML Engineering",
     "Data Science"
   ],
-  "summary": "A controlled comparison of LoRA, DoRA, and IA3 against zero-shot and few-shot math-reasoning baselines.",
+  "summary": "A controlled comparison of LoRA, DoRA, and IA3 against zero-shot and five-shot math-reasoning baselines, followed by an audit and a same-pipeline rerun.",
   "technologies": [
     "PyTorch",
     "PEFT",
     "Transformers",
     "GSM8K"
   ],
-  "signal": "The baseline beat every adapter.",
-  "decision": "Keep the model, data budget, and evaluation consistent, and publish negative results.",
+  "signal": "No adapter beat the zero-shot baseline.",
+  "decision": "Rerun every condition through one evaluation pipeline, and withdraw claims the evidence no longer supports.",
   "kind": "ML experiment",
   "featuredOrder": 5,
   "sources": [
@@ -23,51 +23,140 @@
       "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/README.md"
     },
     {
-      "label": "Recorded evaluation metrics",
-      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/results/metrics/baseline_summary.json"
+      "label": "Same-pipeline results and paired tests",
+      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/results/phase1-v1/references-v100/report_tables_answer_first.md"
     },
     {
-      "label": "Comparison report",
-      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/report/peft_comparison_report.md"
+      "label": "Audit and amendments",
+      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/blob/HEAD/report/phase0_audit.md"
     }
   ],
   "study": {
     "problem": "Does parameter-efficient fine-tuning improve multi-step math reasoning when training data and compute are constrained?",
-    "built": "Built a training and evaluation harness for LoRA, DoRA, and IA3, with answer extraction, per-category reporting, saved predictions, and zero-shot/five-shot baselines.",
+    "built": "Built a training and evaluation harness for LoRA, DoRA, and IA3, with answer extraction and saved predictions. Then audited the original report and re-evaluated every adapter and baseline on the full GSM8K test split through one FP16 V100 pipeline, with bootstrap intervals and paired tests.",
     "flow": [
-      "GSM8K",
-      "Shared training budget",
-      "Adapters & baselines",
-      "Held-out evaluation"
+      "GSM8K training split",
+      "Adapter training",
+      "Same-pipeline evaluation",
+      "Paired tests"
     ],
-    "architecture": "The adapter runs use Llama-3.2-3B-Instruct, 6,000 examples, two epochs, seed 42, and a single V100 GPU. Evaluation records accuracy, extraction failures, latency, and output length. A ten-epoch IA3 follow-up probes longer training.",
+    "architecture": "Adapters train Llama-3.2-3B-Instruct on 6,000 GSM8K examples for two epochs at seed 42, with a ten-epoch IA3 follow-up. Every condition is re-evaluated on the 1,319-question test split. Intervals resample questions 10,000 times, and exact McNemar tests use Holm correction across 15 comparisons.",
     "decisions": [
       {
-        "title": "Keep the baseline visible",
-        "body": "All three adapters underperformed the zero-shot model. IA3 is the best adapter in the recorded comparison, but not the best overall method."
+        "title": "Re-test the headline",
+        "body": "Under the shared pipeline, zero-shot still has the highest accuracy, but it is not distinguishable from five-shot or two-epoch IA3. It is significantly ahead of LoRA, DoRA, and ten-epoch IA3."
       },
       {
-        "title": "Inspect more than accuracy",
-        "body": "Track answer extraction failures and generation length alongside correctness to distinguish task failure from output-format behavior."
+        "title": "Withdraw what doesn’t hold",
+        "body": "The audit withdrew the original latency comparison, the overfitting explanation for ten-epoch IA3, and the category-level claims. Two of five headline claims changed under the rerun."
       },
       {
-        "title": "Test the longer-training hypothesis",
-        "body": "IA3 accuracy fell from 0.6975 at two epochs to 0.6262 at ten. More epochs did not repair the gap under these conditions."
+        "title": "Preregister the next test",
+        "body": "Phase 1 compared three LoRA training-target formats on the same questions, with a decision rule fixed in advance. None was distinguishable. Self-generated reasoning made answers longer without recovering accuracy."
       }
     ],
     "results": [
       {
         "label": "Zero-shot accuracy",
-        "value": "75.59%",
-        "context": "Recorded GSM8K test evaluation, Llama-3.2-3B-Instruct, seed 42."
+        "value": "74.22%",
+        "context": "979 of 1,319 GSM8K test questions; 95% CI 71.80–76.57%. Llama-3.2-3B-Instruct, FP16 V100 pipeline."
       },
       {
-        "label": "Best adapter: IA3",
-        "value": "69.75%",
-        "context": "6,000 training examples and two epochs; below the zero-shot baseline. LoRA: 63.99%; DoRA: 63.38%."
+        "label": "Best adapter: IA3, two epochs",
+        "value": "72.10%",
+        "context": "95% CI 69.67–74.45%; not distinguishable from zero-shot after Holm correction. DoRA 63.99%, LoRA 62.85%."
       }
     ],
-    "limitations": "This is one model, dataset, seed, and constrained training recipe. The experiment does not establish a universal ranking of adapter methods. Identical hyperparameters are a controlled comparison, not per-method tuning.",
-    "lesson": "A strong experiment can conclude that the simplest method is best for the tested budget."
+    "limitations": "One model, one benchmark, and one training seed. The intervals reflect question sampling, not seed variability. Adapters share hyperparameters rather than per-method tuning, and the original baseline scores could not be reproduced within one percentage point. Phase 2 was canceled.",
+    "lesson": "Rerunning your own experiment can change the conclusion. A good report says which claims survived.",
+    "chart": {
+      "type": "bar",
+      "title": "GSM8K test accuracy, one evaluation pipeline",
+      "unit": "%",
+      "decimals": 2,
+      "max": 100,
+      "caption": "Whiskers show 95% question-bootstrap intervals (10,000 resamples). 1,319 test questions, Llama-3.2-3B-Instruct, seed 42. Zero-shot, two-epoch IA3, and five-shot are not distinguishable by Holm-corrected paired tests.",
+      "series": [
+        {
+          "name": "Accuracy",
+          "tone": "neutral"
+        }
+      ],
+      "rows": [
+        {
+          "label": "Instruct zero-shot",
+          "tone": "green",
+          "values": [
+            74.22
+          ],
+          "intervals": [
+            [
+              71.8,
+              76.57
+            ]
+          ]
+        },
+        {
+          "label": "IA3, 2 epochs",
+          "values": [
+            72.1
+          ],
+          "intervals": [
+            [
+              69.67,
+              74.45
+            ]
+          ]
+        },
+        {
+          "label": "Instruct five-shot",
+          "values": [
+            71.49
+          ],
+          "intervals": [
+            [
+              68.99,
+              73.92
+            ]
+          ]
+        },
+        {
+          "label": "IA3, 10 epochs",
+          "values": [
+            69.37
+          ],
+          "intervals": [
+            [
+              66.87,
+              71.8
+            ]
+          ]
+        },
+        {
+          "label": "DoRA",
+          "values": [
+            63.99
+          ],
+          "intervals": [
+            [
+              61.49,
+              66.64
+            ]
+          ]
+        },
+        {
+          "label": "LoRA",
+          "values": [
+            62.85
+          ],
+          "intervals": [
+            [
+              60.27,
+              65.5
+            ]
+          ]
+        }
+      ]
+    }
   }
 }

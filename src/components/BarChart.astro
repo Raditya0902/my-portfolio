@@ -1,0 +1,43 @@
+---
+import type { BarChart } from '../lib/content-schemas';
+import { barAxis, formatTick, formatValue, share } from '../lib/charts';
+import ChartTable from './ChartTable.astro';
+interface Props { chart: BarChart; id: string }
+const { chart, id } = Astro.props;
+const { max, ticks } = barAxis(chart);
+const showLegend = chart.series.length > 1;
+const describe = (row: BarChart['rows'][number], index: number) => {
+  const interval = row.intervals?.[index];
+  const range = interval ? `, interval ${formatValue(interval[0], chart.decimals, chart.unit)} to ${formatValue(interval[1], chart.decimals, chart.unit)}` : '';
+  const series = showLegend ? `${chart.series[index].name}: ` : '';
+  return `${row.label}, ${series}${formatValue(row.values[index], chart.decimals, chart.unit)}${range}`;
+};
+---
+<figure class="chart" aria-labelledby={`${id}-title`}>
+  <p class="chart-title" id={`${id}-title`}>{chart.title}</p>
+  {showLegend && <ul class="chart-legend">{chart.series.map((series) => <li><span class="swatch" data-tone={series.tone} aria-hidden="true"></span>{series.name}</li>)}</ul>}
+  <div class="bar-chart" aria-hidden="true">
+    {chart.rows.map((row) => <div class="bar-group">
+      <p class="bar-label">{row.label}</p>
+      {row.values.map((value, index) => {
+        const interval = row.intervals?.[index];
+        return <div class="bar-line" title={describe(row, index)}>
+          <div class="bar-track">
+            <span class="bar-fill" data-tone={row.tone ?? chart.series[index].tone} style={`width: ${share(value, max)}%`}></span>
+            {interval && <span class="bar-interval" style={`left: ${share(interval[0], max)}%; width: ${share(interval[1], max) - share(interval[0], max)}%`}></span>}
+          </div>
+          <span class="bar-value">{formatValue(value, chart.decimals, chart.unit)}</span>
+        </div>;
+      })}
+    </div>)}
+    <div class="bar-axis"><div class="bar-track">{ticks.map((tick) => <span style={`left: ${share(tick, max)}%`}>{formatTick(tick)}</span>)}</div><span class="bar-value"></span></div>
+  </div>
+  <figcaption>{chart.caption}</figcaption>
+  <ChartTable
+    headers={['', ...chart.series.map((series) => series.name)]}
+    rows={chart.rows.map((row) => [row.label, ...row.values.map((value, index) => {
+      const interval = row.intervals?.[index];
+      return interval ? `${formatValue(value, chart.decimals, chart.unit)} [${formatValue(interval[0], chart.decimals)}, ${formatValue(interval[1], chart.decimals)}]` : formatValue(value, chart.decimals, chart.unit);
+    })])}
+  />
+</figure>

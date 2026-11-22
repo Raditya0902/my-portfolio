@@ -68,6 +68,40 @@
       }
     ],
     "limitations": "ShopSphere is fictional and all business outcomes are simulated. Results depend on the data generator, baseline choices, and evaluation windows. They demonstrate analytical methods rather than customer impact.",
-    "lesson": "The recommendation should follow the evidence, including uncertainty and cases where a simpler baseline is competitive."
+    "lesson": "The recommendation should follow the evidence, including uncertainty and cases where a simpler baseline is competitive.",
+    "chart": {
+      "type": "bar",
+      "title": "Churn model vs. recency baseline (ROC AUC)",
+      "unit": "",
+      "decimals": 3,
+      "max": 1,
+      "caption": "Synthetic data for a fictional company. Reference: held-out test split as of 2025-06-30 (2,514 customers). Out-of-time: all 12,330 customers as of 2025-09-30. AUC 0.5 is chance.",
+      "series": [
+        {
+          "name": "Churn model",
+          "tone": "green"
+        },
+        {
+          "name": "Recency baseline",
+          "tone": "neutral"
+        }
+      ],
+      "rows": [
+        {
+          "label": "Reference test window",
+          "values": [
+            0.7331,
+            0.5587
+          ]
+        },
+        {
+          "label": "Out-of-time window",
+          "values": [
+            0.7398,
+            0.565
+          ]
+        }
+      ]
+    }
   }
 }

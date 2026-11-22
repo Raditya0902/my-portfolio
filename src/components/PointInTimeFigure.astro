@@ -1,0 +1,33 @@
+---
+// Illustrates the historical-join rule: newest snapshot at or before the event, no older than the TTL.
+const HOURS_BEFORE = 30;
+const HOURS_AFTER = 8;
+const TTL_HOURS = 24;
+const [LEFT, RIGHT, AXIS_Y] = [40, 600, 132];
+const x = (hour: number) => LEFT + ((hour + HOURS_BEFORE) / (HOURS_BEFORE + HOURS_AFTER)) * (RIGHT - LEFT);
+const snapshots = [
+  { hour: -28, state: 'rejected', lines: ['Too old', 'outside TTL'], anchor: 'start' },
+  { hour: -14, state: 'eligible', lines: ['Eligible,', 'but older'], anchor: 'middle' },
+  { hour: -3, state: 'selected', lines: ['Selected:', 'newest ≤ event'], anchor: 'end' },
+  { hour: 3, state: 'rejected', lines: ['Future', 'rejected'], anchor: 'start' },
+] as const;
+---
+<figure class="chart">
+  <p class="chart-title" id="pit-title">Which snapshot the historical join picks</p>
+  <div class="chart-scroll">
+    <svg class="timeline" viewBox="0 0 640 220" role="img" aria-labelledby="pit-title" aria-describedby="pit-caption">
+      <rect class="ttl-band" x={x(-TTL_HOURS)} y="62" width={x(0) - x(-TTL_HOURS)} height={AXIS_Y - 62} />
+      <text class="band-label" x={x(-TTL_HOURS) + 10} y="82">TTL window: 24 h before the event</text>
+      <line class="axis" x1={LEFT} x2={RIGHT} y1={AXIS_Y} y2={AXIS_Y} />
+      <line class="event" x1={x(0)} x2={x(0)} y1="36" y2={AXIS_Y + 16} />
+      <text class="event-label" x={x(0)} y="26" text-anchor="middle">Prediction event</text>
+      <text class="tick" x={x(-TTL_HOURS)} y={AXIS_Y + 30} text-anchor="middle">−24 h</text>
+      <text class="tick" x={x(0)} y={AXIS_Y + 30} text-anchor="middle">t</text>
+      {snapshots.map((snapshot) => <g class="snapshot" data-state={snapshot.state}>
+        <circle cx={x(snapshot.hour)} cy={AXIS_Y} r={snapshot.state === "selected" ? 8 : 6} />
+        {snapshot.lines.map((line, index) => <text x={x(snapshot.hour) + (snapshot.anchor === 'start' ? -6 : snapshot.anchor === 'end' ? 6 : 0)} y={AXIS_Y + 56 + index * 18} text-anchor={snapshot.anchor}>{line}</text>)}
+      </g>)}
+    </svg>
+  </div>
+  <figcaption id="pit-caption">For each request event, the historical join keeps the newest hourly snapshot at or before the event time and at most 24 hours old (the registry TTL). An event with no eligible snapshot keeps missing features. Timestamps are illustrative.</figcaption>
+</figure>

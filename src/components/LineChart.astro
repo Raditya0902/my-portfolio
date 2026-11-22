@@ -1,0 +1,30 @@
+---
+import type { LineChart } from '../lib/content-schemas';
+import { formatTick, formatValue, lineGeometry } from '../lib/charts';
+import ChartTable from './ChartTable.astro';
+interface Props { chart: LineChart; id: string }
+const { chart, id } = Astro.props;
+const geometry = lineGeometry(chart);
+const { plot } = geometry;
+const LABEL_OFFSET = 10;
+---
+<figure class="chart" aria-labelledby={`${id}-title`}>
+  <p class="chart-title" id={`${id}-title`}>{chart.title}</p>
+  <ul class="chart-legend">{chart.series.map((series) => <li><span class="swatch" data-tone={series.tone} data-dashed={series.dashed ? '' : undefined} aria-hidden="true"></span>{series.name}</li>)}</ul>
+  <div class="chart-scroll">
+    <svg class="line-chart" viewBox={`0 0 ${geometry.width} ${geometry.height}`} role="img" aria-labelledby={`${id}-title`}>
+      <g class="grid">{geometry.yTicks.map((tick) => <g><line x1={plot.left} x2={plot.right} y1={tick.y} y2={tick.y} /><text x={plot.left - 8} y={tick.y} dy="0.32em" text-anchor="end">{formatTick(tick.value)}</text></g>)}</g>
+      <g class="grid x-axis">{geometry.xTicks.map((tick) => <text x={tick.x} y={plot.bottom + 20} text-anchor="middle">{formatTick(tick.value)}</text>)}<text class="axis-title" x={(plot.left + plot.right) / 2} y={plot.bottom + 38} text-anchor="middle">{chart.xLabel}</text></g>
+      {geometry.series.map((series) => <g class="series" data-tone={series.tone}>
+        <path d={series.path} stroke-dasharray={series.dashed ? '6 5' : undefined} />
+        {series.points.map((point) => <circle cx={point.x} cy={point.y} r="4"><title>{`${series.name}, ${chart.xLabel.toLowerCase()} ${formatTick(point.xValue)}: ${formatValue(point.value, chart.decimals, chart.unit)}`}</title></circle>)}
+        <text class="series-label" x={plot.right + LABEL_OFFSET} y={series.labelY} dy="0.32em">{series.name}</text>
+      </g>)}
+    </svg>
+  </div>
+  <figcaption>{chart.caption}</figcaption>
+  <ChartTable
+    headers={[chart.xLabel, ...chart.series.map((series) => series.name)]}
+    rows={chart.x.map((x, index) => [formatTick(x), ...chart.series.map((series) => formatValue(series.values[index], chart.decimals, chart.unit))])}
+  />
+</figure>

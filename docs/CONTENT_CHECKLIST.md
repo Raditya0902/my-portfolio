@@ -13,16 +13,16 @@
 
 ## Featured projects and evidence reviewed
 
-Reviewed on 2026-09-05 UTC. Results below are source-reported, not newly executed benchmarks. Project records link directly to these artifacts.
+Re-reviewed on 2026-11-22 UTC against each repository's latest default branch. Results are source-reported, not newly executed benchmarks. Every case-study chart uses numbers copied from the artifacts below; update the chart data whenever a repository's results change.
 
 | Project | Evidence | Editorial decision |
 | --- | --- | --- |
-| lsmdb | README cluster/durability sections; `internal/raft/node_test.go` | Show local single-client throughput/failover with hardware and workload. Include the four-client slowdown and distinguish embedded durability from Raft. |
-| ShopSphere | README; ExperimentIQ and ModelGuard `reports/analysis_results.json` | Explicitly fictional company and synthetic data. Model AUC 0.7398 vs. recency 0.5650; conversion relative lift 0.0688, p=0.036. Revenue p=0.373 is not significant. |
-| vLLM harness | README; `reports/README.md` | Report AWQ 2187.9 output tok/s at concurrency 32 on RTX A5000. Explain the serial baseline and memory tradeoff. Raw runs are git-ignored; report tables are available. |
-| Mini Feature Store | README; `internal/historical/point_in_time.go` | Explain explicit timestamp and TTL checks. Do not turn the Spark materialization timing into a claim about historical joins or online serving. |
-| PEFT comparison | README; `results/metrics/baseline_summary.json` | Zero-shot 0.7559 outperforms all adapters; IA3 0.6975. One seed and shared hyperparameters limit generalization. |
-| RAG RBAC | README; `EVAL_RESULTS.md` | Show both 25-question faithfulness 0.9116 and 50-question 0.7423 with different judges. Do not conflate automated test count with evaluation questions. |
+| lsmdb | README Results section; `benchmarks/results/2026-10-06-p13-compare.json`; `internal/raft` tests | Chart: median throughput with min–max ranges for four engine versions at 1/4/16 clients (GCE e2-standard-4, pd-ssd). The older Apple M4 figures (89.6 ops/s, 296 ms failover) came from the pre-rewrite tool and were removed. No failover result exists for the current engine; no linearizability checker. |
+| ShopSphere | README; ExperimentIQ and ModelGuard `reports/analysis_results.json` | Explicitly fictional company and synthetic data. Chart: model vs. recency AUC on reference (0.733 vs. 0.559) and out-of-time (0.740 vs. 0.565) windows. Conversion relative lift 0.0688, p=0.036; revenue p=0.373 is not significant. |
+| vLLM harness | README; `reports/README.md` | Chart: output throughput vs. concurrency for fp16, AWQ, GPTQ, and the serial baseline on RTX A5000. Explain the serial baseline and memory tradeoff. |
+| Mini Feature Store | README (2026-11-18 verification update); `internal/historical` | Diagram of the as-of join rule (newest snapshot at or before the event, 24-hour TTL). Joins now scan Parquet in batches; do not turn the Spark materialization timing into a claim about joins or serving. |
+| PEFT comparison | README (2026-11-19); `results/phase1-v1/references-v100/report_tables_answer_first.md`; `report/phase0_audit.md` | The original report is superseded. Chart: same-pipeline accuracy with 95% bootstrap intervals. Zero-shot 0.7422 is highest but not distinguishable from five-shot or 2-epoch IA3 (0.7210). Latency, overfitting, and category claims are withdrawn. |
+| RAG RBAC | README Evaluation section; `EVAL_RESULTS.md` (2026-11-22 entry) | Chart: faithfulness and relevancy by question type. Current: faithfulness 0.9490, relevancy 0.8831 on 40 answerable questions, 10/10 refusals, deepseek-chat judge. Earlier scores used other judges, models, or question sets and are not comparable. |
 
 The directory’s additional project summaries are grounded in their public READMEs. Diffuse Refactor is described as a limited benchmark study, without its original claim of general proof. Graph Analytics is described as an educational ETL/graph project, without asserting real-time streaming or Kafka usage.
 

@@ -1,0 +1,12 @@
+---
+import type { Project } from '../lib/content-schemas';
+import BarChart from './BarChart.astro';
+import LineChart from './LineChart.astro';
+import PointInTimeFigure from './PointInTimeFigure.astro';
+interface Props { study: NonNullable<Project['study']>; id: string }
+const { study, id } = Astro.props;
+const { chart, figure } = study;
+---
+{chart?.type === 'bar' && <BarChart chart={chart} id={id} />}
+{chart?.type === 'line' && <LineChart chart={chart} id={id} />}
+{figure === 'point-in-time' && <PointInTimeFigure />}
