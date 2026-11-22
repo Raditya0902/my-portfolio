@@ -23,7 +23,7 @@ A static Astro 6 and Tailwind 4 portfolio covering software, data science, ML, a
 6. Filter out the internal `portfolio` topic. Use demonstrated technologies and source-backed results with measurement conditions.
 7. Keep synthetic studies explicitly labeled. Do not invent background, ownership, metrics, response-time promises, or demo/resume links.
 8. Use `npm run dev`, `npm run check`, and `npm test` for validation. Do not run production build/prebuild or deploy unless explicitly requested.
-9. Production builds are offline and deterministic from checked-in data. Weekly refresh is a separate workflow using Node 22.12+.
+9. Production builds are offline and deterministic from checked-in data. Daily refresh is a separate workflow using Node 22.12+.
 
 ## Commands
 
