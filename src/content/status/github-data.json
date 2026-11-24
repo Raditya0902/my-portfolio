@@ -1,5 +1,5 @@
 {
-  "lastUpdate": "2026-11-22T10:05:58.491Z",
+  "lastUpdate": "2026-11-24T21:59:35.368Z",
   "repositories": [
     {
       "repo": "Raditya0902/lsmdb",
@@ -149,6 +149,27 @@
   "recentActivity": [
     {
       "kind": "commit",
+      "repo": "Raditya0902/sentinelmesh",
+      "message": "Merge pull request #8 from Raditya0902/fix/test-sqlite-leaks\n\nfix: close SQLite connections leaked by the test suite",
+      "url": "https://github.com/Raditya0902/sentinelmesh/commit/43439f2b0972dbf087e930f70f23d02a6c04e55f",
+      "timestamp": "2026-11-24T20:42:38Z"
+    },
+    {
+      "kind": "commit",
+      "repo": "Raditya0902/sentinelmesh",
+      "message": "fix: close SQLite connections leaked by the test suite\n\ncreate_app() opens the review-map connection and only lifespan shutdown\ncloses it; tests using TestClient without `with` never ran shutdown, so\npytest reported 52 ResourceWarnings for unclosed databases.\n\n- ReviewThreads is now a context manager\n- conftest: make_app fixture closes every app's review DB at teardown;\n  session fixture closes the orchestrator's checkpoint connection\n- tests use make_app / `with ReviewThreads(...)`\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
+      "url": "https://github.com/Raditya0902/sentinelmesh/commit/5d99d0ccb8f9a080e6c84969c1d6261b4c5db295",
+      "timestamp": "2026-11-24T20:34:12Z"
+    },
+    {
+      "kind": "commit",
+      "repo": "Raditya0902/sentinelmesh",
+      "message": "Merge pull request #7 from Raditya0902/docs/add-mit-license\n\ndocs: add MIT license",
+      "url": "https://github.com/Raditya0902/sentinelmesh/commit/741e47c620b33869f9184b4a02a63ea4eebe5f16",
+      "timestamp": "2026-11-24T08:41:19Z"
+    },
+    {
+      "kind": "commit",
       "repo": "Raditya0902/rag-rbac-chatbot",
       "message": "feat: stop the RAG model inferring links the documents don't state\n\nMulti-hop faithfulness was 0.74: gpt-oss-120b connected facts the documents\nlist separately (e.g. check-ins exist \"to review progress toward probation\nobjectives\"). The prompt now forbids unstated purposes, causes and\nconnections, and applying policy beyond what the context says. When a\nquestion asks for a link the context lacks, the model gives every related\nfact first, then ends with MISSING_LINK_MESSAGE.\n\n50q full run, same model and judge (deepseek-chat):\n  before:  faithfulness 0.8916, relevancy 0.9048 (multi-hop 0.744 / 0.830)\n  now:     faithfulness 0.9490, relevancy 0.8831 (multi-hop 0.912 / 0.773)\nRefusals unchanged at 10/10, 0/40 false refusals.\n\nA stricter variant without the facts-first ordering scored 0.9566 / 0.8556\nbut sometimes opened with the missing-link sentence and skipped stated\nfacts, scoring 0 relevancy on two answers.\n\nMISSING_LINK_MESSAGE must not contain REFUSAL_MESSAGE, since refusal\ndetection is a substring match; a test guards this.\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>",
       "url": "https://github.com/Raditya0902/rag-rbac-chatbot/commit/1a50ae8b34a285722acd6d3fa073bd229c9d86ba",
@@ -188,27 +209,6 @@
       "message": "Make the held-out-selected v1 pipeline the default",
       "url": "https://github.com/Raditya0902/multi-agent-production-incident-response-system/commit/d43a0ba9cac54559de65b36d77f59e27d9be41ff",
       "timestamp": "2026-11-20T01:30:26Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/peft-reasoning-comparison",
-      "message": "Document final Phase 1 results and close the study",
-      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/commit/82075bb3dd92d37a79e91718febbcffa2883356f",
-      "timestamp": "2026-11-19T18:04:12Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/peft-reasoning-comparison",
-      "message": "Record completed Phase 1 LoRA ablation and VM shutdown",
-      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/commit/b235e3ff808ee5061be28ea7bc5a5229224222a1",
-      "timestamp": "2026-11-19T15:38:56Z"
-    },
-    {
-      "kind": "commit",
-      "repo": "Raditya0902/peft-reasoning-comparison",
-      "message": "Align Phase 1 prompts and prepare the three-arm checkpoint",
-      "url": "https://github.com/Raditya0902/peft-reasoning-comparison/commit/1ba0c65d598beecb3e22ee5cceadc8e2683a59c7",
-      "timestamp": "2026-11-19T07:51:24Z"
     }
   ]
 }
